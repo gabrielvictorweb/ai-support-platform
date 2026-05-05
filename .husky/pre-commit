@@ -1,1 +1,2 @@
-# pnpm test
+#!/bin/sh
+echo "pre-commit running"
