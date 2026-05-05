@@ -1,0 +1,56 @@
+# Node / pnpm
+
+node_modules/
+.pnpm-store/
+.pnpm-debug.log
+dist/
+build/
+
+# Logs
+
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Env
+
+.env
+.env.*
+!.env.example
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# IDE
+
+.vscode/
+.idea/
+
+# Python
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# Docker
+
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage / tests
+
+coverage/
+.nyc_output/
+
+# Misc
+
+.tmp/
+.cache/
