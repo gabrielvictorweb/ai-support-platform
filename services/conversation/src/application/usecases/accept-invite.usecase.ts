@@ -23,6 +23,8 @@ export class AcceptInviteUseCase implements AcceptInviteUseCasePort {
             InviteStatus.ACCEPTED,
         );
 
-        return invite ? toInviteOutput(invite) : null;
+        if (!invite) return null;
+
+        return toInviteOutput(invite);
     }
 }
