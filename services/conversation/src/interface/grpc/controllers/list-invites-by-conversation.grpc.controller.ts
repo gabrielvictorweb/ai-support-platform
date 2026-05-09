@@ -18,7 +18,7 @@ export class ListInvitesByConversationGrpcController {
 
         return {
             items: invites.map((invite) => {
-                return InvitePresenter.toGrpcResponse(invite);
+                return InvitePresenter.toGrpcResponse(invite).invite;
             }),
         };
     }
