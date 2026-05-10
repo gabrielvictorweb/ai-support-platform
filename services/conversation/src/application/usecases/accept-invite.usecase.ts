@@ -15,9 +15,7 @@ export class AcceptInviteUseCase implements AcceptInviteInputPort {
         private readonly acceptInvite: IUpdateInviteStatus,
     ) {}
 
-    async execute(
-        input: UpdateInviteStatusDto,
-    ): Promise<InviteOutput | null> {
+    async execute(input: UpdateInviteStatusDto): Promise<InviteOutput | null> {
         const invite = await this.acceptInvite.updateStatus(
             input.id,
             InviteStatus.ACCEPTED,

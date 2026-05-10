@@ -15,9 +15,7 @@ export class RejectInviteUseCase implements RejectInviteInputPort {
         private readonly reject: IUpdateInviteStatus,
     ) {}
 
-    async execute(
-        input: UpdateInviteStatusDto,
-    ): Promise<InviteOutput | null> {
+    async execute(input: UpdateInviteStatusDto): Promise<InviteOutput | null> {
         const invite = await this.reject.updateStatus(
             input.id,
             InviteStatus.REJECTED,

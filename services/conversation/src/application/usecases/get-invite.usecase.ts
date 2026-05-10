@@ -1,10 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { type IFindInviteById } from '../ports/output/invite.output';
-import {
-    type GetInviteDto,
-    type InviteOutput,
-    toInviteOutput,
-} from '../dtos';
+import { type GetInviteDto, type InviteOutput, toInviteOutput } from '../dtos';
 import { type GetInviteInput as GetInviteInputPort } from '../ports/input';
 
 @Injectable()

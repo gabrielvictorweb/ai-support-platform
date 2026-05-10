@@ -13,9 +13,7 @@ export class DeleteConversationGrpcController {
     ) {}
 
     @GrpcMethod('ConversationService', 'DeleteConversation')
-    async execute(
-        request: DeleteConversationDto,
-    ): Promise<DeleteResultOutput> {
+    async execute(request: DeleteConversationDto): Promise<DeleteResultOutput> {
         return this.deleteConversationUseCase.execute({ id: request.id });
     }
 }
