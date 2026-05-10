@@ -1,8 +1,8 @@
 import {
     ConversationOutput,
-    CreateConversationInput,
+    CreateConversationDto,
 } from 'src/application/dtos';
 
-export interface CreateConversationUseCase {
-    execute(input: CreateConversationInput): Promise<ConversationOutput>;
+export interface CreateConversationInput {
+    execute(input: CreateConversationDto): Promise<ConversationOutput>;
 }

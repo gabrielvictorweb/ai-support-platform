@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { CreateConversationUseCase } from '../../../application/usecases/create-conversation.usecase';
-import { type CreateConversationInput } from '../../../application/dtos';
+import { type CreateConversationDto } from '../../../application/dtos';
 import { ConversationPresenter } from 'src/interface/presenters/conversation.presenter';
 
 @Controller()
@@ -11,7 +11,7 @@ export class CreateConversationGrpcController {
     ) {}
 
     @GrpcMethod('ConversationService', 'CreateConversation')
-    async execute(request: CreateConversationInput) {
+    async execute(request: CreateConversationDto) {
         const conversation = await this.createConversationUseCase.execute({
             participantIds: request.participantIds ?? [],
         });

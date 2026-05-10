@@ -1,8 +1,8 @@
 import {
     InviteOutput,
-    ListInvitesByConversationInput,
+    ListInvitesByConversationDto,
 } from 'src/application/dtos';
 
-export interface ListInvitesByConversationUseCase {
-    execute(input: ListInvitesByConversationInput): Promise<InviteOutput[]>;
+export interface ListInvitesByConversationInput {
+    execute(input: ListInvitesByConversationDto): Promise<InviteOutput[]>;
 }

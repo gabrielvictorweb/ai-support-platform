@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { DeleteConversationUseCase } from '../../../application/usecases/delete-conversation.usecase';
 import {
-    type DeleteConversationInput,
+    type DeleteConversationDto,
     type DeleteResultOutput,
 } from '../../../application/dtos';
 
@@ -14,7 +14,7 @@ export class DeleteConversationGrpcController {
 
     @GrpcMethod('ConversationService', 'DeleteConversation')
     async execute(
-        request: DeleteConversationInput,
+        request: DeleteConversationDto,
     ): Promise<DeleteResultOutput> {
         return this.deleteConversationUseCase.execute({ id: request.id });
     }

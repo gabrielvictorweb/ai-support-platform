@@ -9,7 +9,7 @@ import {
     type IUpdateMessage,
     type MessageCursorPaginationInput,
     type MessageCursorPaginationResult,
-} from '../../application/ports/output/message.repository';
+} from '../../application/ports/output/message.output';
 import { PrismaService } from '../database/prisma/prisma.service';
 
 @Injectable()

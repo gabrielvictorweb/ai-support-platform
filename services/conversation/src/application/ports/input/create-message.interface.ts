@@ -1,5 +1,5 @@
-import { CreateMessageInput, MessageOutput } from 'src/application/dtos';
+import { CreateMessageDto, MessageOutput } from 'src/application/dtos';
 
-export interface CreateMessageUseCase {
-    execute(input: CreateMessageInput): Promise<MessageOutput>;
+export interface CreateMessageInput {
+    execute(input: CreateMessageDto): Promise<MessageOutput>;
 }

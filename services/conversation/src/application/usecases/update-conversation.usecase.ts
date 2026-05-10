@@ -2,17 +2,17 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import {
     type IFindConversationById,
     type IUpdateConversation,
-} from '../ports/output/conversation.repository';
+} from '../ports/output/conversation.output';
 import {
     type ConversationOutput,
-    type UpdateConversationInput,
+    type UpdateConversationDto,
     toConversationOutput,
 } from '../dtos';
 import { Conversation } from '../../domain/entities/conversation.entity';
-import { type UpdateConversationUseCase as UpdateConversationUseCasePort } from '../ports/input';
+import { type UpdateConversationInput as UpdateConversationInputPort } from '../ports/input';
 
 @Injectable()
-export class UpdateConversationUseCase implements UpdateConversationUseCasePort {
+export class UpdateConversationUseCase implements UpdateConversationInputPort {
     constructor(
         @Inject('FindConversationById')
         private readonly findConversationById: IFindConversationById,
@@ -21,7 +21,7 @@ export class UpdateConversationUseCase implements UpdateConversationUseCasePort 
     ) {}
 
     async execute(
-        input: UpdateConversationInput,
+        input: UpdateConversationDto,
     ): Promise<ConversationOutput | null> {
         const conversation = await this.findConversationById.findById(input.id);
         if (!conversation) {

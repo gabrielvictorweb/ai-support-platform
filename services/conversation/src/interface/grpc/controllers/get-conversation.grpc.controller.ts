@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { GetConversationUseCase } from '../../../application/usecases/get-conversation.usecase';
-import { type GetConversationInput } from '../../../application/dtos';
+import { type GetConversationDto } from '../../../application/dtos';
 import { ConversationPresenter } from 'src/interface/presenters/conversation.presenter';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
@@ -13,7 +13,7 @@ export class GetConversationGrpcController {
     ) {}
 
     @GrpcMethod('ConversationService', 'GetConversation')
-    async execute(request: GetConversationInput) {
+    async execute(request: GetConversationDto) {
         const conversation = await this.getConversationUseCase.execute({
             id: request.id,
         });

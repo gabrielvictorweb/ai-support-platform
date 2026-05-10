@@ -1,14 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { type IFindMessages } from '../ports/output/message.repository';
+import { type IFindMessages } from '../ports/output/message.output';
 import {
-    type ListMessagesInput,
+    type ListMessagesDto,
     type MessageConnectionOutput,
     toMessageConnectionOutput,
 } from '../dtos';
-import { type ListMessagesUseCase as ListMessagesUseCasePort } from '../ports/input';
+import { type ListMessagesInput as ListMessagesInputPort } from '../ports/input';
 
 @Injectable()
-export class ListMessagesUseCase implements ListMessagesUseCasePort {
+export class ListMessagesUseCase implements ListMessagesInputPort {
     private static readonly DEFAULT_LIMIT = 20;
     private static readonly MAX_LIMIT = 100;
 
@@ -17,7 +17,7 @@ export class ListMessagesUseCase implements ListMessagesUseCasePort {
         private readonly findMessages: IFindMessages,
     ) {}
 
-    async execute(input?: ListMessagesInput): Promise<MessageConnectionOutput> {
+    async execute(input?: ListMessagesDto): Promise<MessageConnectionOutput> {
         const cursor = input?.cursor;
         const limit = input?.limit;
         const resolvedLimit = Math.min(

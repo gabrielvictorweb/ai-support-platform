@@ -1,20 +1,20 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { type ICreateConversation } from '../ports/output/conversation.repository';
+import { type ICreateConversation } from '../ports/output/conversation.output';
 import {
     type ConversationOutput,
-    type CreateConversationInput,
+    type CreateConversationDto,
     toConversationOutput,
 } from '../dtos';
-import { type CreateConversationUseCase as CreateConversationUseCasePort } from '../ports/input';
+import { type CreateConversationInput as CreateConversationInputPort } from '../ports/input';
 
 @Injectable()
-export class CreateConversationUseCase implements CreateConversationUseCasePort {
+export class CreateConversationUseCase implements CreateConversationInputPort {
     constructor(
         @Inject('CreateConversation')
         private readonly createConversation: ICreateConversation,
     ) {}
 
-    async execute(input: CreateConversationInput): Promise<ConversationOutput> {
+    async execute(input: CreateConversationDto): Promise<ConversationOutput> {
         const participantIds = input.participantIds ?? [];
 
         const conversation = await this.createConversation.create({

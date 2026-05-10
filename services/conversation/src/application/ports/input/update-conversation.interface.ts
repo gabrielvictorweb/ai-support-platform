@@ -1,8 +1,8 @@
 import {
     ConversationOutput,
-    UpdateConversationInput,
+    UpdateConversationDto,
 } from 'src/application/dtos';
 
-export interface UpdateConversationUseCase {
-    execute(input: UpdateConversationInput): Promise<ConversationOutput | null>;
+export interface UpdateConversationInput {
+    execute(input: UpdateConversationDto): Promise<ConversationOutput | null>;
 }

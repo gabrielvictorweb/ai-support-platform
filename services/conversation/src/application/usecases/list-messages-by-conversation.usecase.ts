@@ -1,14 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { type IFindMessagesByConversationId } from '../ports/output/message.repository';
+import { type IFindMessagesByConversationId } from '../ports/output/message.output';
 import {
-    type ListMessagesByConversationInput,
+    type ListMessagesByConversationDto,
     type MessageConnectionOutput,
     toMessageConnectionOutput,
 } from '../dtos';
-import { type ListMessagesByConversationUseCase as ListMessagesByConversationUseCasePort } from '../ports/input';
+import { type ListMessagesByConversationInput as ListMessagesByConversationInputPort } from '../ports/input';
 
 @Injectable()
-export class ListMessagesByConversationUseCase implements ListMessagesByConversationUseCasePort {
+export class ListMessagesByConversationUseCase implements ListMessagesByConversationInputPort {
     private static readonly DEFAULT_LIMIT = 20;
     private static readonly MAX_LIMIT = 100;
 
@@ -18,7 +18,7 @@ export class ListMessagesByConversationUseCase implements ListMessagesByConversa
     ) {}
 
     async execute(
-        input: ListMessagesByConversationInput,
+        input: ListMessagesByConversationDto,
     ): Promise<MessageConnectionOutput> {
         const cursor = input.cursor;
         const limit = input.limit;

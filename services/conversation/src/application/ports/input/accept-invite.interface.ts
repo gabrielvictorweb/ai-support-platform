@@ -1,5 +1,5 @@
-import { InviteOutput, UpdateInviteStatusInput } from 'src/application/dtos';
+import { InviteOutput, UpdateInviteStatusDto } from 'src/application/dtos';
 
-export interface AcceptInviteUseCase {
-    execute(input: UpdateInviteStatusInput): Promise<InviteOutput | null>;
+export interface AcceptInviteInput {
+    execute(input: UpdateInviteStatusDto): Promise<InviteOutput | null>;
 }
