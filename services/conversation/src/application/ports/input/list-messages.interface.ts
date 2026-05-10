@@ -1,8 +1,8 @@
 import {
-    ListMessagesInput,
+    ListMessagesDto,
     MessageConnectionOutput,
 } from 'src/application/dtos';
 
-export interface ListMessagesUseCase {
-    execute(input?: ListMessagesInput): Promise<MessageConnectionOutput>;
+export interface ListMessagesInput {
+    execute(input?: ListMessagesDto): Promise<MessageConnectionOutput>;
 }

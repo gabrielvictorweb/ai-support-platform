@@ -17,3 +17,20 @@ export const toInviteOutput = (invite: Invite): InviteOutput => ({
     createdAt: invite.createdAt,
     updatedAt: invite.updatedAt,
 });
+
+export interface CreateInviteDto {
+    conversationId: string;
+    userId: string;
+}
+
+export interface GetInviteDto {
+    id: string;
+}
+
+export interface ListInvitesByConversationDto {
+    conversationId: string;
+}
+
+export interface UpdateInviteStatusDto {
+    id: string;
+}

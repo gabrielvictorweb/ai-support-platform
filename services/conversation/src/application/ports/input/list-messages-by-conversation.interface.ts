@@ -1,10 +1,10 @@
 import {
-    ListMessagesByConversationInput,
+    ListMessagesByConversationDto,
     MessageConnectionOutput,
 } from 'src/application/dtos';
 
-export interface ListMessagesByConversationUseCase {
+export interface ListMessagesByConversationInput {
     execute(
-        input: ListMessagesByConversationInput,
+        input: ListMessagesByConversationDto,
     ): Promise<MessageConnectionOutput>;
 }

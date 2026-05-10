@@ -1,7 +1,7 @@
 import { Controller, NotFoundException } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { UpdateConversationUseCase } from '../../../application/usecases/update-conversation.usecase';
-import { type UpdateConversationInput } from '../../../application/dtos';
+import { type UpdateConversationDto } from '../../../application/dtos';
 import { ConversationPresenter } from 'src/interface/presenters/conversation.presenter';
 
 @Controller()
@@ -11,7 +11,7 @@ export class UpdateConversationGrpcController {
     ) {}
 
     @GrpcMethod('ConversationService', 'UpdateConversation')
-    async execute(request: UpdateConversationInput) {
+    async execute(request: UpdateConversationDto) {
         const conversation = await this.updateConversationUseCase.execute({
             id: request.id,
             participantIds: request.participantIds,

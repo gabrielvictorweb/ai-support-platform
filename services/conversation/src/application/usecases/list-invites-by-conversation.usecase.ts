@@ -2,20 +2,20 @@ import { Injectable, Inject } from '@nestjs/common';
 import { type IFindInvitesByConversationId } from '../ports/output/invite.output';
 import {
     type InviteOutput,
-    type ListInvitesByConversationInput,
+    type ListInvitesByConversationDto,
     toInviteOutput,
 } from '../dtos';
-import { type ListInvitesByConversationUseCase as ListInvitesByConversationUseCasePort } from '../ports/input';
+import { type ListInvitesByConversationInput as ListInvitesByConversationInputPort } from '../ports/input';
 
 @Injectable()
-export class ListInvitesByConversationUseCase implements ListInvitesByConversationUseCasePort {
+export class ListInvitesByConversationUseCase implements ListInvitesByConversationInputPort {
     constructor(
         @Inject('FindInvitesByConversationId')
         private readonly findInvitesByConversationId: IFindInvitesByConversationId,
     ) {}
 
     async execute(
-        input: ListInvitesByConversationInput,
+        input: ListInvitesByConversationDto,
     ): Promise<InviteOutput[]> {
         const invites =
             await this.findInvitesByConversationId.findByConversationId(

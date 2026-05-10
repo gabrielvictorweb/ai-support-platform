@@ -1,7 +1,7 @@
 import { Controller, NotFoundException } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { RejectInviteUseCase } from '../../../application/usecases/reject-invite.usecase';
-import { type UpdateInviteStatusInput } from '../../../application/dtos';
+import { type UpdateInviteStatusDto } from '../../../application/dtos';
 import { InvitePresenter } from 'src/interface/presenters/invite.presenter';
 
 @Controller()
@@ -9,7 +9,7 @@ export class RejectInviteGrpcController {
     constructor(private readonly rejectInviteUseCase: RejectInviteUseCase) {}
 
     @GrpcMethod('InviteService', 'RejectInvite')
-    async execute(request: UpdateInviteStatusInput) {
+    async execute(request: UpdateInviteStatusDto) {
         const invite = await this.rejectInviteUseCase.execute({
             id: request.id,
         });

@@ -1,4 +1,4 @@
-import { type MessageCursorPaginationResult } from '../ports/output/message.repository';
+import { type MessageCursorPaginationResult } from '../ports/output/message.output';
 import { Message } from '../../domain/entities/message.entity';
 
 export interface MessageOutput {
@@ -30,3 +30,32 @@ export const toMessageConnectionOutput = (
     nextCursor: result.nextCursor,
     hasNextPage: result.hasNextPage,
 });
+
+export interface CreateMessageDto {
+    conversationId: string;
+    content: string;
+}
+
+export interface GetMessageDto {
+    id: string;
+}
+
+export interface ListMessagesDto {
+    cursor?: string;
+    limit?: number;
+}
+
+export interface ListMessagesByConversationDto {
+    conversationId: string;
+    cursor?: string;
+    limit?: number;
+}
+
+export interface UpdateMessageDto {
+    id: string;
+    content?: string;
+}
+
+export interface DeleteMessageDto {
+    id: string;
+}

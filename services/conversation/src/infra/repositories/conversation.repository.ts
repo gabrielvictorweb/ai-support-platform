@@ -6,7 +6,7 @@ import {
     type IFindConversationById,
     type IFindConversations,
     type IUpdateConversation,
-} from '../../application/ports/output/conversation.repository';
+} from '../../application/ports/output/conversation.output';
 import { PrismaService } from '../database/prisma/prisma.service';
 
 @Injectable()

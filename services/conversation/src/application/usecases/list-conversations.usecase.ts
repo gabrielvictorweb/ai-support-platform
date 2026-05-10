@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { type IFindConversations } from '../ports/output/conversation.repository';
+import { type IFindConversations } from '../ports/output/conversation.output';
 import { type ConversationOutput, toConversationOutput } from '../dtos';
-import { type ListConversationsUseCase as ListConversationsUseCasePort } from '../ports/input';
+import { type ListConversationsInput as ListConversationsInputPort } from '../ports/input';
 
 @Injectable()
-export class ListConversationsUseCase implements ListConversationsUseCasePort {
+export class ListConversationsUseCase implements ListConversationsInputPort {
     constructor(
         @Inject('FindConversations')
         private readonly findConversations: IFindConversations,

@@ -1,20 +1,20 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { type IFindMessageById } from '../ports/output/message.repository';
+import { type IFindMessageById } from '../ports/output/message.output';
 import {
-    type GetMessageInput,
+    type GetMessageDto,
     type MessageOutput,
     toMessageOutput,
 } from '../dtos';
-import { type GetMessageUseCase as GetMessageUseCasePort } from '../ports/input';
+import { type GetMessageInput as GetMessageInputPort } from '../ports/input';
 
 @Injectable()
-export class GetMessageUseCase implements GetMessageUseCasePort {
+export class GetMessageUseCase implements GetMessageInputPort {
     constructor(
         @Inject('FindMessageById')
         private readonly findMessageById: IFindMessageById,
     ) {}
 
-    async execute(input: GetMessageInput): Promise<MessageOutput> {
+    async execute(input: GetMessageDto): Promise<MessageOutput> {
         const message = await this.findMessageById.findById(input.id);
         if (!message) {
             throw new NotFoundException(

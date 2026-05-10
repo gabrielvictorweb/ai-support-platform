@@ -1,5 +1,5 @@
-import { CreateInviteInput, InviteOutput } from 'src/application/dtos';
+import { CreateInviteDto, InviteOutput } from 'src/application/dtos';
 
-export interface CreateInviteUseCase {
-    execute(input: CreateInviteInput): Promise<InviteOutput>;
+export interface CreateInviteInput {
+    execute(input: CreateInviteDto): Promise<InviteOutput>;
 }

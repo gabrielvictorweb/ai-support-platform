@@ -1,5 +1,5 @@
-import { DeleteMessageInput, DeleteResultOutput } from 'src/application/dtos';
+import { DeleteMessageDto, DeleteResultOutput } from 'src/application/dtos';
 
-export interface DeleteMessageUseCase {
-    execute(input: DeleteMessageInput): Promise<DeleteResultOutput>;
+export interface DeleteMessageInput {
+    execute(input: DeleteMessageDto): Promise<DeleteResultOutput>;
 }

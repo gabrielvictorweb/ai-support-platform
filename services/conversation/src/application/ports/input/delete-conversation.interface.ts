@@ -1,8 +1,8 @@
 import {
-    DeleteConversationInput,
+    DeleteConversationDto,
     DeleteResultOutput,
 } from 'src/application/dtos';
 
-export interface DeleteConversationUseCase {
-    execute(input: DeleteConversationInput): Promise<DeleteResultOutput>;
+export interface DeleteConversationInput {
+    execute(input: DeleteConversationDto): Promise<DeleteResultOutput>;
 }
