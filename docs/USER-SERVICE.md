@@ -1,38 +1,38 @@
 # Users Closed Chat
 
-Aplicação Spring Boot para gerenciamento de usuários do closed chat com arquitetura em camadas, comunicação via gRPC, persistência com JPA/PostgreSQL e observabilidade com Prometheus.
+Spring Boot application for closed chat user management with layered architecture, gRPC communication, JPA/PostgreSQL persistence, and Prometheus observability.
 
-## Visão geral
+## Overview
 
-A aplicação expõe operações de CRUD de usuários através de gRPC (`users.UserService`) e aplica regras de negócio no `application` sem acoplamento direto com detalhes de infraestrutura.
+The application exposes user CRUD operations over gRPC (`users.UserService`) and applies business rules in the `application` layer without direct coupling to infrastructure details.
 
-Regras de domínio principais:
+Core domain rules:
 
-- campos obrigatórios: `name`, `email`, `phone`
-- `email` único
-- `id` do usuário em UUID
+- required fields: `name`, `email`, `phone`
+- unique `email`
+- user `id` is UUID
 
-## Arquitetura
+## Architecture
 
-Estrutura baseada em camadas e inversão de dependência:
+Layered structure with dependency inversion:
 
-- `domain`: entidades e regras puras (`User`)
-- `application/gateways`: contratos de persistência
-- `application/usecases`: orquestração das regras de negócio
-- `infra/repositories`: implementação JPA dos gateways
-- `infra/controller`: adapters internos para entrada/saída de dados
-- `infra/grpc`: transporte gRPC (service, mapper e tratamento de exceções)
+- `domain`: pure entities and rules (`User`)
+- `application/gateways`: persistence contracts
+- `application/usecases`: business rule orchestration
+- `infra/repositories`: JPA implementations of gateways
+- `infra/controller`: internal adapters for input/output
+- `infra/grpc`: gRPC transport (service, mapper, exception handling)
 
-## Decisões técnicas
+## Technical Decisions
 
-- **gRPC em vez de GraphQL**: contrato explícito e tipado com Protobuf, facilitando evolução e geração de stubs.
-- **UUID como ID**: evita previsibilidade de IDs sequenciais e melhora segurança em integrações externas.
-- **JPA + PostgreSQL**: persistência relacional com constraints (`email` único) e mapeamento simples.
-- **Use cases desacoplados**: regras de negócio dependem de interfaces (`UserGateway`), não de framework.
-- **Micrometer + Prometheus**: métricas publicadas no endpoint `/metrics`.
-- **Testes unitários com Mockito**: cobertura de use cases e controllers com mocks para feedback rápido.
+- **gRPC instead of GraphQL**: explicit, typed contract with Protobuf for easier evolution and stub generation.
+- **UUID as ID**: avoids predictable sequential IDs and improves external integration safety.
+- **JPA + PostgreSQL**: relational persistence with constraints (unique `email`) and simple mapping.
+- **Decoupled use cases**: business rules depend on interfaces (`UserGateway`), not framework.
+- **Micrometer + Prometheus**: metrics published at the `/metrics` endpoint.
+- **Unit tests with Mockito**: coverage for use cases and controllers with mocks for fast feedback.
 
-## Tecnologias
+## Technologies
 
 - Java 25
 - Spring Boot 4.0.5
@@ -44,22 +44,22 @@ Estrutura baseada em camadas e inversão de dependência:
 - Micrometer Prometheus
 - JUnit 5 + Mockito
 
-## Configuração
+## Configuration
 
-A aplicação lê variáveis de ambiente e também importa opcionalmente `application-local.properties`.
+The application reads environment variables and can optionally import `application-local.properties`.
 
-Variáveis suportadas:
+Supported variables:
 
 - `DB_URL`
 - `DB_USERNAME`
 - `DB_PASSWORD`
 
-Configuração JPA em runtime:
+Runtime JPA configuration:
 
-- `spring.jpa.hibernate.ddl-auto=validate` (não altera schema automaticamente em produção/local)
-- `spring.flyway.enabled=true` (migração versionada antes da validação do Hibernate)
+- `spring.jpa.hibernate.ddl-auto=validate` (does not change schema automatically in production/local)
+- `spring.flyway.enabled=true` (versioned migration before Hibernate validation)
 
-Exemplo (Linux/macOS):
+Example (Linux/macOS):
 
 ```bash
 export DB_URL='jdbc:postgresql://localhost:5432/users'
@@ -67,39 +67,39 @@ export DB_USERNAME='postgres'
 export DB_PASSWORD='postgres'
 ```
 
-## Como executar a aplicação
+## How to run the application
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Portas e endpoints:
+Ports and endpoints:
 
 - gRPC server: `9090`
-- métricas Prometheus: `http://localhost:8080/metrics`
+- Prometheus metrics: `http://localhost:8080/metrics`
 
-## Como executar os testes unitários
+## How to run unit tests
 
 ```bash
 ./mvnw test
 ```
 
-Os testes cobrem:
+Tests cover:
 
-- `application/usecases` com `UserGateway` mockado
-- `infra/controller` com use cases mockados
+- `application/usecases` with mocked `UserGateway`
+- `infra/controller` with mocked use cases
 
-## Contrato gRPC
+## gRPC Contract
 
-Arquivo proto:
+Proto file:
 
 - `src/main/proto/user_service.proto`
 
-Serviço exposto:
+Exposed service:
 
 - `users.UserService`
 
-Métodos:
+Methods:
 
 - `FindAllUsers`
 - `FindUserById`
@@ -108,37 +108,37 @@ Métodos:
 - `UpdateUser`
 - `DeleteUser`
 
-Observação:
+Note:
 
-- os campos `id` trafegam como `string` em formato UUID no contrato gRPC.
+- `id` fields are transferred as `string` in UUID format in the gRPC contract.
 
-## Migração de banco (BIGINT -> UUID)
+## Database Migration (BIGINT -> UUID)
 
-Se sua base já existia antes da mudança para UUID, pode ocorrer erro como:
+If your database existed before the UUID change, you may see errors such as:
 
 - `java.lang.ClassCastException: Cannot cast java.lang.Long to java.util.UUID`
 
-Isso significa que a coluna `users.id` no PostgreSQL ainda está em `BIGINT`.
+This means the `users.id` column in PostgreSQL is still `BIGINT`.
 
-Também pode aparecer durante startup com mensagem semelhante a:
+You might also see during startup:
 
 - `alter column id set data type uuid ... identity column type must be smallint, integer, or bigint`
 
-Esse erro ocorre quando o Hibernate tenta fazer auto-migração de uma coluna `IDENTITY` numérica para UUID.
+This happens when Hibernate tries to auto-migrate a numeric `IDENTITY` column to UUID.
 
-### Opção 1 (recomendada para base existente)
+### Option 1 (recommended for existing databases)
 
-Ao subir a aplicação, o Flyway executa automaticamente a migração versionada em:
+When the app starts, Flyway automatically runs the versioned migration at:
 
 - `src/main/resources/db/migration/V1__users_id_to_uuid.sql`
 
-Se quiser executar manualmente o script equivalente:
+If you want to run the equivalent script manually:
 
 ```bash
 psql "postgresql://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require" -f scripts/migrate_users_id_to_uuid.sql
 ```
 
-Se preferir executar pelo Flyway Maven plugin (o plugin nao le o application.properties automaticamente), use:
+If you prefer to run via the Flyway Maven plugin (the plugin does not read application.properties automatically), use:
 
 ```bash
 ./mvnw flyway:migrate \
@@ -147,24 +147,24 @@ Se preferir executar pelo Flyway Maven plugin (o plugin nao le o application.pro
  -Dflyway.password=admin
 ```
 
-Se você usa `DB_URL` no formato JDBC (`jdbc:postgresql://...`), converta para o formato aceito pelo `psql` (`postgresql://...`).
+If you use `DB_URL` in JDBC format (`jdbc:postgresql://...`), convert it to the format accepted by `psql` (`postgresql://...`).
 
-O script está em:
+The script is located at:
 
 - `scripts/migrate_users_id_to_uuid.sql`
 
-Ordem recomendada:
+Recommended order:
 
-1. pare a aplicação
-2. execute o script SQL
-3. suba a aplicação novamente
+1. stop the application
+2. run the SQL script
+3. start the application again
 
-### Opção 2 (ambiente local sem necessidade de preservar dados)
+### Option 2 (local environment without data preservation)
 
-Remova a tabela e deixe o Hibernate recriar:
+Drop the table and let Hibernate recreate it:
 
 ```sql
 DROP TABLE IF EXISTS users;
 ```
 
-Depois reinicie a aplicação.
+Then restart the application.
