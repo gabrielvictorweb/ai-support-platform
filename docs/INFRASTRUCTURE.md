@@ -1,30 +1,30 @@
-# Infraestrutura
+# Infrastructure
 
 ## Postgres via Docker
 
-Antes de iniciar os servicos locais, e necessario subir o container do Postgres via Docker. Isso garante que os servicos que dependem do banco possam iniciar corretamente.
+Before starting local services, you must start the Postgres container via Docker. This ensures services that depend on the database can boot correctly.
 
-### Passos
+### Steps
 
-1. Entre no diretorio do compose do Postgres:
+1. Enter the Postgres compose directory:
 
    ```bash
    cd infra/docker/postgres
    ```
 
-2. Suba o container:
+2. Start the container:
 
    ```bash
    docker compose up -d
    ```
 
-3. Verifique se o container esta saudavel:
+3. Check container health:
 
    ```bash
    docker compose ps
    ```
 
-### Observacoes
+### Notes
 
-- Suba o Postgres antes de rodar os servicos locais.
-- Para parar o container: `docker compose down`.
+- Start Postgres before running local services.
+- To stop the container: `docker compose down`.
