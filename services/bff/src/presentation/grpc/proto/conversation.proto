@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package conversation;
+
+service ConversationService {
+    rpc CreateConversation(CreateConversationRequest) returns (ConversationResponse);
+    rpc GetConversation(GetConversationRequest) returns (ConversationResponse);
+    rpc ListConversations(ListConversationsRequest) returns (ListConversationsResponse);
+    rpc UpdateConversation(UpdateConversationRequest) returns (ConversationResponse);
+    rpc DeleteConversation(DeleteConversationRequest) returns (DeleteResult);
+}
+
+service MessageService {
+    rpc CreateMessage(CreateMessageRequest) returns (MessageResponse);
+    rpc GetMessage(GetMessageRequest) returns (MessageResponse);
+    rpc ListMessages(ListMessagesRequest) returns (MessageConnection);
+    rpc ListMessagesByConversation(ListMessagesByConversationRequest) returns (MessageConnection);
+    rpc UpdateMessage(UpdateMessageRequest) returns (MessageResponse);
+    rpc DeleteMessage(DeleteMessageRequest) returns (DeleteResult);
+}
+
+service InviteService {
+    rpc CreateInvite(CreateInviteRequest) returns (InviteResponse);
+    rpc GetInvite(GetInviteRequest) returns (InviteResponse);
+    rpc ListInvitesByConversation(ListInvitesByConversationRequest) returns (ListInvitesByConversationResponse);
+    rpc AcceptInvite(UpdateInviteStatusRequest) returns (InviteResponse);
+    rpc RejectInvite(UpdateInviteStatusRequest) returns (InviteResponse);
+}
+
+message Conversation {
+    string id = 1;
+    repeated string participantIds = 2;
+    string createdAt = 3;
+    string updatedAt = 4;
+}
+
+message Message {
+    string id = 1;
+    string conversationId = 2;
+    string content = 3;
+    string createdAt = 4;
+    string updatedAt = 5;
+}
+
+message Invite {
+    string id = 1;
+    string conversationId = 2;
+    string userId = 3;
+    string status = 4;
+    string createdAt = 5;
+    string updatedAt = 6;
+}
+
+message MessageConnection {
+    repeated Message items = 1;
+    string nextCursor = 2;
+    bool hasNextPage = 3;
+}
+
+message DeleteResult {
+    bool success = 1;
+}
+
+message CreateConversationRequest {
+    repeated string participantIds = 1;
+}
+
+message GetConversationRequest {
+    string id = 1;
+}
+
+message ListConversationsRequest {}
+
+message ListConversationsResponse {
+    repeated Conversation items = 1;
+}
+
+message UpdateConversationRequest {
+    string id = 1;
+    repeated string participantIds = 2;
+}
+
+message DeleteConversationRequest {
+    string id = 1;
+}
+
+message CreateMessageRequest {
+    string conversationId = 1;
+    string content = 2;
+}
+
+message GetMessageRequest {
+    string id = 1;
+}
+
+message ListMessagesRequest {
+    string cursor = 1;
+    int32 limit = 2;
+}
+
+message ListMessagesByConversationRequest {
+    string conversationId = 1;
+    string cursor = 2;
+    int32 limit = 3;
+}
+
+message UpdateMessageRequest {
+    string id = 1;
+    string content = 2;
+}
+
+message DeleteMessageRequest {
+    string id = 1;
+}
+
+message CreateInviteRequest {
+    string conversationId = 1;
+    string userId = 2;
+}
+
+message GetInviteRequest {
+    string id = 1;
+}
+
+message ListInvitesByConversationRequest {
+    string conversationId = 1;
+}
+
+message ListInvitesByConversationResponse {
+    repeated Invite items = 1;
+}
+
+message UpdateInviteStatusRequest {
+    string id = 1;
+}
+
+message ConversationResponse {
+    Conversation conversation = 1;
+}
+
+message MessageResponse {
+    Message message = 1;
+}
+
+message InviteResponse {
+    Invite invite = 1;
+}
