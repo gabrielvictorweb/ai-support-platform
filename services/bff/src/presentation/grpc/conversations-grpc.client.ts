@@ -125,7 +125,10 @@ export class ConversationsGrpcClient
         }
       }
     } catch (err) {
-      this.logger.error('Failed to fetch conversations from Conversation Service', err);
+      this.logger.error(
+        'Failed to fetch conversations from Conversation Service',
+        err,
+      );
       for (const conversation of CONVERSATIONS) {
         for (const participantId of conversation.participantIds) {
           if (!userIdSet.has(participantId)) {
