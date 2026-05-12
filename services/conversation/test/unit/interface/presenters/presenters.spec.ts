@@ -1,7 +1,7 @@
-import { ConversationPresenter } from '../../../../src/interface/presenters/conversation.presenter';
-import { InvitePresenter } from '../../../../src/interface/presenters/invite.presenter';
-import { MessagePresenter } from '../../../../src/interface/presenters/message.presenter';
-import { MessageConnectionPresenter } from '../../../../src/interface/presenters/messageConnection.presenter';
+import { ConversationPresenter } from '../../../../src/presentation/presenters/conversation.presenter';
+import { InvitePresenter } from '../../../../src/presentation/presenters/invite.presenter';
+import { MessagePresenter } from '../../../../src/presentation/presenters/message.presenter';
+import { MessageConnectionPresenter } from '../../../../src/presentation/presenters/messageConnection.presenter';
 import {
     ConversationOutput,
     InviteOutput,

@@ -4,7 +4,7 @@ import { CreateMessageUseCase } from '../../application/usecases/create-message.
 import { type CreateMessageEvent } from '../libs/rabbitmq/rabbitmq.interfaces';
 import { type MessageOutput } from '../../application/dtos';
 import { RABBITMQ_CREATE_MESSAGE_PATTERN } from '../libs/rabbitmq/rabbitmq.constants';
-import { ChatGateway } from '../../interface/gateways/chat.gateway';
+import { ChatGateway } from '../../presentation/gateways/chat.gateway';
 
 @Controller()
 export class CreateMessageConsumer {

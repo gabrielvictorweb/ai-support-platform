@@ -1,0 +1,21 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Conversation {
+  id: ID!
+  participantIds: [ID!]!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type User {
+  id: ID!
+  name: String!
+  conversations: [Conversation!]!
+}
+
+type Query {
+  me: User!
+  users(ids: [ID!]): [User!]!
+}

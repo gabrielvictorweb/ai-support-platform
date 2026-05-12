@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package users;
+
+option java_multiple_files = true;
+option java_package = "com.gabrielvictorweb.users_closed_chat.infra.grpc.generated";
+option java_outer_classname = "UserServiceProto";
+
+service UserService {
+  rpc FindAllUsers(Empty) returns (FindAllUsersResponse);
+  rpc FindUserById(FindUserByIdRequest) returns (UserMessage);
+  rpc FindUserByEmail(FindUserByEmailRequest) returns (UserMessage);
+  rpc CreateUser(CreateUserRequest) returns (UserMessage);
+  rpc UpdateUser(UpdateUserRequest) returns (UserMessage);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+message Empty {}
+
+message UserInputMessage {
+  string name = 1;
+  string email = 2;
+  string phone = 3;
+}
+
+message UserMessage {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+}
+
+message FindAllUsersResponse {
+  repeated UserMessage users = 1;
+}
+
+message FindUserByIdRequest {
+  string id = 1;
+}
+
+message FindUserByEmailRequest {
+  string email = 1;
+}
+
+message CreateUserRequest {
+  UserInputMessage input = 1;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  UserInputMessage input = 2;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message DeleteUserResponse {
+  bool deleted = 1;
+}
