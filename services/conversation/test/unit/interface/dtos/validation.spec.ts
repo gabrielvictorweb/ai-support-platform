@@ -1,10 +1,10 @@
 import { validate } from 'class-validator';
-import { CreateConversationDto } from '../../../../src/interface/dtos/create-conversation.dto';
-import { UpdateConversationDto } from '../../../../src/interface/dtos/update-conversation.dto';
-import { CreateMessageDto } from '../../../../src/interface/dtos/create-message.dto';
-import { UpdateMessageDto } from '../../../../src/interface/dtos/update-message.dto';
-import { CreateInviteDto } from '../../../../src/interface/dtos/create-invite.dto';
-import { UpdateInviteStatusDto } from '../../../../src/interface/dtos/update-invite-status.dto';
+import { CreateConversationDto } from '../../../../src/presentation/dtos/create-conversation.dto';
+import { UpdateConversationDto } from '../../../../src/presentation/dtos/update-conversation.dto';
+import { CreateMessageDto } from '../../../../src/presentation/dtos/create-message.dto';
+import { UpdateMessageDto } from '../../../../src/presentation/dtos/update-message.dto';
+import { CreateInviteDto } from '../../../../src/presentation/dtos/create-invite.dto';
+import { UpdateInviteStatusDto } from '../../../../src/presentation/dtos/update-invite-status.dto';
 
 describe('Interface DTO validation', () => {
     it('should validate create conversation dto', async () => {
