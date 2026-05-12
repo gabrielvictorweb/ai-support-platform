@@ -5,12 +5,12 @@ import { join } from 'path';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 
-import { CreateMessageGrpcController } from '../../src/interface/grpc/controllers/create-message.grpc.controller';
-import { GetMessageGrpcController } from '../../src/interface/grpc/controllers/get-message.grpc.controller';
-import { ListMessagesGrpcController } from '../../src/interface/grpc/controllers/list-messages.grpc.controller';
-import { ListMessagesByConversationGrpcController } from '../../src/interface/grpc/controllers/list-messages-by-conversation.grpc.controller';
-import { UpdateMessageGrpcController } from '../../src/interface/grpc/controllers/update-message.grpc.controller';
-import { DeleteMessageGrpcController } from '../../src/interface/grpc/controllers/delete-message.grpc.controller';
+import { CreateMessageGrpcController } from '../../src/presentation/grpc/controllers/create-message.grpc.controller';
+import { GetMessageGrpcController } from '../../src/presentation/grpc/controllers/get-message.grpc.controller';
+import { ListMessagesGrpcController } from '../../src/presentation/grpc/controllers/list-messages.grpc.controller';
+import { ListMessagesByConversationGrpcController } from '../../src/presentation/grpc/controllers/list-messages-by-conversation.grpc.controller';
+import { UpdateMessageGrpcController } from '../../src/presentation/grpc/controllers/update-message.grpc.controller';
+import { DeleteMessageGrpcController } from '../../src/presentation/grpc/controllers/delete-message.grpc.controller';
 
 import { CreateMessageUseCase } from '../../src/application/usecases/create-message.usecase';
 import { GetMessageUseCase } from '../../src/application/usecases/get-message.usecase';

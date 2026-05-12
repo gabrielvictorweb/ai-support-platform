@@ -5,11 +5,11 @@ import { join } from 'path';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 
-import { CreateConversationGrpcController } from '../../src/interface/grpc/controllers/create-conversation.grpc.controller';
-import { GetConversationGrpcController } from '../../src/interface/grpc/controllers/get-conversation.grpc.controller';
-import { ListConversationsGrpcController } from '../../src/interface/grpc/controllers/list-conversations.grpc.controller';
-import { UpdateConversationGrpcController } from '../../src/interface/grpc/controllers/update-conversation.grpc.controller';
-import { DeleteConversationGrpcController } from '../../src/interface/grpc/controllers/delete-conversation.grpc.controller';
+import { CreateConversationGrpcController } from '../../src/presentation/grpc/controllers/create-conversation.grpc.controller';
+import { GetConversationGrpcController } from '../../src/presentation/grpc/controllers/get-conversation.grpc.controller';
+import { ListConversationsGrpcController } from '../../src/presentation/grpc/controllers/list-conversations.grpc.controller';
+import { UpdateConversationGrpcController } from '../../src/presentation/grpc/controllers/update-conversation.grpc.controller';
+import { DeleteConversationGrpcController } from '../../src/presentation/grpc/controllers/delete-conversation.grpc.controller';
 
 import { CreateConversationUseCase } from '../../src/application/usecases/create-conversation.usecase';
 import { GetConversationUseCase } from '../../src/application/usecases/get-conversation.usecase';
