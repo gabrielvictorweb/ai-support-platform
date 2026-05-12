@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { CreateConversationUseCase } from '../../../application/usecases/create-conversation.usecase';
 import { type CreateConversationDto } from '../../../application/dtos';
-import { ConversationPresenter } from 'src/interface/presenters/conversation.presenter';
+import { ConversationPresenter } from 'src/presentation/presenters/conversation.presenter';
 
 @Controller()
 export class CreateConversationGrpcController {

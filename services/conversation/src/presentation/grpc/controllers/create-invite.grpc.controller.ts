@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { CreateInviteUseCase } from '../../../application/usecases/create-invite.usecase';
 import { type CreateInviteDto } from '../../../application/dtos';
-import { InvitePresenter } from 'src/interface/presenters/invite.presenter';
+import { InvitePresenter } from 'src/presentation/presenters/invite.presenter';
 
 @Controller()
 export class CreateInviteGrpcController {

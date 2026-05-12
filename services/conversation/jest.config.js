@@ -20,6 +20,6 @@ module.exports = {
         'src/interface/controllers/',
         'src/interface/grpc/controllers/',
     ],
-    coverageDirectory: '../coverage',
+    coverageDirectory: './coverage',
     testEnvironment: 'node',
 };
