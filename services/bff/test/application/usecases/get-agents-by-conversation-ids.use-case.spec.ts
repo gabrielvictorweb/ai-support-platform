@@ -25,6 +25,8 @@ describe('GetAgentsByConversationIdsUseCase', () => {
     const result = await useCase.execute({ conversationIds: ['c1'] });
 
     expect(result).toBe(map);
-    expect(agentReadPortMock.findByConversationIds).toHaveBeenCalledWith(['c1']);
+    expect(agentReadPortMock.findByConversationIds).toHaveBeenCalledWith([
+      'c1',
+    ]);
   });
 });

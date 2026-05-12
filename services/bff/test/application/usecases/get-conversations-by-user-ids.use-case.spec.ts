@@ -7,7 +7,9 @@ describe('GetConversationsByUserIdsUseCase', () => {
     findByUserIds: jest.fn(),
   } as unknown as ConversationReadPort;
 
-  const useCase = new GetConversationsByUserIdsUseCase(conversationReadPortMock);
+  const useCase = new GetConversationsByUserIdsUseCase(
+    conversationReadPortMock,
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
