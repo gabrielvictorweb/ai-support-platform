@@ -2,7 +2,7 @@ import { Controller, NotFoundException } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { GetInviteUseCase } from '../../../application/usecases/get-invite.usecase';
 import { type GetInviteDto } from '../../../application/dtos';
-import { InvitePresenter } from 'src/interface/presenters/invite.presenter';
+import { InvitePresenter } from 'src/presentation/presenters/invite.presenter';
 
 @Controller()
 export class GetInviteGrpcController {

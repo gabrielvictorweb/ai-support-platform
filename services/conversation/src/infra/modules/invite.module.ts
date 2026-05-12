@@ -6,11 +6,11 @@ import { ListInvitesByConversationUseCase } from '../../application/usecases/lis
 import { AcceptInviteUseCase } from '../../application/usecases/accept-invite.usecase';
 import { RejectInviteUseCase } from '../../application/usecases/reject-invite.usecase';
 import { PrismaModule } from './prisma.module';
-import { CreateInviteGrpcController } from '../../interface/grpc/controllers/create-invite.grpc.controller';
-import { GetInviteGrpcController } from '../../interface/grpc/controllers/get-invite.grpc.controller';
-import { ListInvitesByConversationGrpcController } from '../../interface/grpc/controllers/list-invites-by-conversation.grpc.controller';
-import { AcceptInviteGrpcController } from '../../interface/grpc/controllers/accept-invite.grpc.controller';
-import { RejectInviteGrpcController } from '../../interface/grpc/controllers/reject-invite.grpc.controller';
+import { CreateInviteGrpcController } from '../../presentation/grpc/controllers/create-invite.grpc.controller';
+import { GetInviteGrpcController } from '../../presentation/grpc/controllers/get-invite.grpc.controller';
+import { ListInvitesByConversationGrpcController } from '../../presentation/grpc/controllers/list-invites-by-conversation.grpc.controller';
+import { AcceptInviteGrpcController } from '../../presentation/grpc/controllers/accept-invite.grpc.controller';
+import { RejectInviteGrpcController } from '../../presentation/grpc/controllers/reject-invite.grpc.controller';
 
 @Module({
     imports: [PrismaModule],

@@ -14,19 +14,19 @@ import { ListMessagesByConversationUseCase } from '../../application/usecases/li
 import { UpdateMessageUseCase } from '../../application/usecases/update-message.usecase';
 import { DeleteMessageUseCase } from '../../application/usecases/delete-message.usecase';
 import { CreateMessageConsumer } from '../consumers/create-message.consumer';
-import { ChatGateway } from '../../interface/gateways/chat.gateway';
+import { ChatGateway } from '../../presentation/gateways/chat.gateway';
 import { PrismaModule } from './prisma.module';
-import { CreateConversationGrpcController } from '../../interface/grpc/controllers/create-conversation.grpc.controller';
-import { GetConversationGrpcController } from '../../interface/grpc/controllers/get-conversation.grpc.controller';
-import { ListConversationsGrpcController } from '../../interface/grpc/controllers/list-conversations.grpc.controller';
-import { UpdateConversationGrpcController } from '../../interface/grpc/controllers/update-conversation.grpc.controller';
-import { DeleteConversationGrpcController } from '../../interface/grpc/controllers/delete-conversation.grpc.controller';
-import { CreateMessageGrpcController } from '../../interface/grpc/controllers/create-message.grpc.controller';
-import { GetMessageGrpcController } from '../../interface/grpc/controllers/get-message.grpc.controller';
-import { ListMessagesGrpcController } from '../../interface/grpc/controllers/list-messages.grpc.controller';
-import { ListMessagesByConversationGrpcController } from '../../interface/grpc/controllers/list-messages-by-conversation.grpc.controller';
-import { UpdateMessageGrpcController } from '../../interface/grpc/controllers/update-message.grpc.controller';
-import { DeleteMessageGrpcController } from '../../interface/grpc/controllers/delete-message.grpc.controller';
+import { CreateConversationGrpcController } from '../../presentation/grpc/controllers/create-conversation.grpc.controller';
+import { GetConversationGrpcController } from '../../presentation/grpc/controllers/get-conversation.grpc.controller';
+import { ListConversationsGrpcController } from '../../presentation/grpc/controllers/list-conversations.grpc.controller';
+import { UpdateConversationGrpcController } from '../../presentation/grpc/controllers/update-conversation.grpc.controller';
+import { DeleteConversationGrpcController } from '../../presentation/grpc/controllers/delete-conversation.grpc.controller';
+import { CreateMessageGrpcController } from '../../presentation/grpc/controllers/create-message.grpc.controller';
+import { GetMessageGrpcController } from '../../presentation/grpc/controllers/get-message.grpc.controller';
+import { ListMessagesGrpcController } from '../../presentation/grpc/controllers/list-messages.grpc.controller';
+import { ListMessagesByConversationGrpcController } from '../../presentation/grpc/controllers/list-messages-by-conversation.grpc.controller';
+import { UpdateMessageGrpcController } from '../../presentation/grpc/controllers/update-message.grpc.controller';
+import { DeleteMessageGrpcController } from '../../presentation/grpc/controllers/delete-message.grpc.controller';
 import {
     RABBITMQ_CLIENT,
     RABBITMQ_QUEUE,

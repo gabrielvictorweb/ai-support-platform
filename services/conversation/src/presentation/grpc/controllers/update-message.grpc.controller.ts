@@ -2,7 +2,7 @@ import { Controller, NotFoundException } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { UpdateMessageUseCase } from '../../../application/usecases/update-message.usecase';
 import { type UpdateMessageDto } from '../../../application/dtos';
-import { MessagePresenter } from 'src/interface/presenters/message.presenter';
+import { MessagePresenter } from 'src/presentation/presenters/message.presenter';
 
 @Controller()
 export class UpdateMessageGrpcController {

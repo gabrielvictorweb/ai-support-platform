@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { GetMessageUseCase } from '../../../application/usecases/get-message.usecase';
 import { type GetMessageDto } from '../../../application/dtos';
-import { MessagePresenter } from 'src/interface/presenters/message.presenter';
+import { MessagePresenter } from 'src/presentation/presenters/message.presenter';
 
 @Controller()
 export class GetMessageGrpcController {

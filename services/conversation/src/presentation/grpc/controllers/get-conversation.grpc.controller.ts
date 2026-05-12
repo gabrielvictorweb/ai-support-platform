@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { GetConversationUseCase } from '../../../application/usecases/get-conversation.usecase';
 import { type GetConversationDto } from '../../../application/dtos';
-import { ConversationPresenter } from 'src/interface/presenters/conversation.presenter';
+import { ConversationPresenter } from 'src/presentation/presenters/conversation.presenter';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 
