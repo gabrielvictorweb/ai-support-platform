@@ -1,4 +1,4 @@
-import { ChatGateway } from '../../../../src/interface/gateways/chat.gateway';
+import { ChatGateway } from '../../../../src/presentation/gateways/chat.gateway';
 import { MessageOutput } from '../../../../src/application/dtos';
 
 describe('ChatGateway', () => {

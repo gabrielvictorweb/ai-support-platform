@@ -1,4 +1,4 @@
-import * as dtos from '../../../../src/interface/dtos';
+import * as dtos from '../../../../src/presentation/dtos';
 
 describe('Interface DTO index', () => {
     it('should export conversation and message dtos', () => {
