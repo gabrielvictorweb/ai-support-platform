@@ -70,7 +70,10 @@ export class UsersGrpcClient implements UserReadPort, OnModuleInit {
       );
       return this.toOutput(user);
     } catch (err) {
-      this.logger.error(`Failed to fetch user ${userId} from User Service`, err);
+      this.logger.error(
+        `Failed to fetch user ${userId} from User Service`,
+        err,
+      );
       return USERS.find((user) => user.id === userId) ?? null;
     }
   }

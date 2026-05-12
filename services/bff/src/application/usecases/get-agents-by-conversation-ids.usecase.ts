@@ -5,7 +5,9 @@ import { type AgentReadPort } from '../ports/output';
 export class GetAgentsByConversationIdsUseCase implements GetAgentsByConversationIdsInput {
   constructor(private readonly agentReadPort: AgentReadPort) {}
 
-  async execute(input: GetAgentsByConversationIdsDto): Promise<Map<string, AgentOutput[]>> {
+  async execute(
+    input: GetAgentsByConversationIdsDto,
+  ): Promise<Map<string, AgentOutput[]>> {
     return this.agentReadPort.findByConversationIds(input.conversationIds);
   }
 }

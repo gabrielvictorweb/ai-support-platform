@@ -5,14 +5,12 @@ export interface ConversationOutput {
   updatedAt: Date;
 }
 
-export const toConversationOutput = (
-  conversation: {
-    id: string;
-    participantIds: string[];
-    createdAt: Date;
-    updatedAt: Date;
-  },
-): ConversationOutput => ({
+export const toConversationOutput = (conversation: {
+  id: string;
+  participantIds: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}): ConversationOutput => ({
   id: conversation.id,
   participantIds: conversation.participantIds,
   createdAt: conversation.createdAt,
