@@ -2,3 +2,4 @@
 echo "pre-commit running"
 
 pnpm --filter ./services/conversation exec prettier --write .
+pnpm --filter ./services/bff exec prettier --write .
