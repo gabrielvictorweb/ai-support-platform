@@ -38,7 +38,7 @@ services:
     image: grafana/loki:latest
     container_name: ai-support-loki
     ports:
-      - "3100:3100"
+      - "3102:3100"
     volumes:
       - ./loki/loki-config.yml:/etc/loki/loki-config.yml
       - loki_data:/loki
