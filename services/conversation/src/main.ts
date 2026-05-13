@@ -24,7 +24,7 @@ async function bootstrap() {
         options: {
             url: `0.0.0.0:${process.env.GRPC_PORT ?? 50051}`,
             package: 'conversation',
-            protoPath: join(__dirname, 'interface/grpc/conversation.proto'),
+            protoPath: join(__dirname, 'presentation/grpc/conversation.proto'),
         },
     });
 

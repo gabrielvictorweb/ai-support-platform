@@ -5,9 +5,13 @@ services:
         image: rabbitmq:3.13-management
         container_name: ai-support-rabbitmq
         hostname: rabbitmq
+        command: >
+            sh -c "rabbitmq-plugins enable rabbitmq_prometheus &&
+                   rabbitmq-server"
         ports:
             - "5672:5672"
             - "15672:15672"
+            - "15692:15692"
         environment:
             RABBITMQ_DEFAULT_USER: admin
             RABBITMQ_DEFAULT_PASS: admin
@@ -18,6 +22,12 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+        networks:
+            - ai-support
 
 volumes:
     rabbitmq_data:
+
+networks:
+    ai-support:
+        external: true

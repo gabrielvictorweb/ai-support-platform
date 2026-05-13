@@ -6,157 +6,158 @@ This document describes the high-level architecture of the AI Support Platform.
 
 ## Overview
 
-The system is designed as a microservices-based platform for customer support, with AI integration as a fallback when human agents are unavailable.
-
-It follows a modular and scalable architecture where each service is responsible for a specific domain.
+The system is a microservices-based platform for customer support with AI integration. Each service owns a specific domain and communicates over well-defined typed contracts.
 
 ---
 
-## High-Level Flow
+## High-level flow
 
 ```text
-Client (Frontend)
-        ↓
-        BFF
-        ↓
------------------------------------
-|   user-service                  |
-|   agent-service                |
-|   conversation-service         |
-|   ai-gateway                   |
------------------------------------
-        ↓
- External AI Providers
+Browser
+  |
+  | GraphQL (Apollo)
+  v
+apps/web (Next.js)
+  |
+  | GraphQL (Apollo)
+  v
+services/bff (NestJS)
+  |
+  |-- gRPC --> services/user    (Spring Boot / Java)
+  |-- gRPC --> services/conversation (NestJS)
+  |-- gRPC --> services/agent   (Python / FastAPI)
 ```
 
 ---
 
-## Core Components
+## Services
 
-### BFF (Backend for Frontend)
-
-- Entry point for all client requests
-- Aggregates data from multiple services
-- Shapes responses for frontend needs
-- Reduces number of client requests
-
-The frontend communicates exclusively with the BFF.
-
----
-
-### user-service
-
-Responsible for:
-
-- Authentication and authorization
-- User management
-- Access control
-
----
-
-### agent-service
-
-Responsible for:
-
-- AI agent configuration
-- Prompt management
-- Agent behavior and rules
-
----
-
-### conversation-service
-
-Responsible for:
-
-- Message handling
-- Conversation history
-- Session and context management
-
----
-
-### ai-gateway
-
-Responsible for:
-
-- Communication with external AI providers
-- Request orchestration
-- Retry and fallback strategies
-- Cost and usage control
+| Service | Language / Framework | Ports | Role |
+|---|---|---|---|
+| `services/bff` | NestJS / TypeScript | 3000 (HTTP/GraphQL) | Entry point; aggregates all downstream services |
+| `services/conversation` | NestJS / TypeScript | 3000 (HTTP), 50052 (gRPC) | Conversation, message, and invite management |
+| `services/user` | Spring Boot / Java | 8080 (HTTP), 7000 (gRPC) | Auth and user management |
+| `services/agent` | Python / FastAPI | 8000 (HTTP), 50053 (gRPC) | AI agent configuration and RAG pipeline |
+| `apps/web` | Next.js / React | 3000 (dev) | Frontend (App Router) |
 
 ---
 
 ## Communication
 
-Services communicate via:
+- **Frontend → BFF**: GraphQL over HTTP (Apollo Client / Apollo Server)
+- **BFF → downstream**: gRPC with Protobuf contracts
+- **Async processing**: RabbitMQ (`conversation.queue`) consumed by the conversation service for message creation events
+- **Real-time events**: Socket.IO gateway in the conversation service
 
-- HTTP REST (primary approach)
+Proto files live alongside the service that owns the contract:
 
-Future improvements may include:
+- `services/conversation/src/presentation/grpc/conversation.proto`
+- `services/agent/src/presentation/grpc/agents.proto`
+- `services/user/src/main/proto/user_service.proto`
 
-- Message queues (e.g., asynchronous processing)
-- Event-driven communication
-
----
-
-## Technology Strategy
-
-- Node.js (NestJS) for API-oriented services
-- Python (FastAPI) for AI-related processing
-- Docker for containerization
-- pnpm for workspace and dependency management
+The BFF keeps client-side copies at `services/bff/src/presentation/grpc/proto/`.
 
 ---
 
-## Data Flow Example
+## Layered architecture (NestJS services)
 
-1. User sends a message via frontend
-2. Request goes to BFF
-3. BFF forwards to conversation-service
-4. If no human agent is available:
-    - BFF calls ai-gateway
-    - ai-gateway processes request via AI provider
+Each NestJS service follows a strict four-layer layout:
 
-5. Response is returned to BFF
-6. BFF returns formatted response to client
+```
+src/
+  domain/          # entities and pure domain logic; no framework dependencies
+  application/
+    usecases/      # orchestration; depends on ports (interfaces), not implementations
+    ports/
+      input/       # use-case interfaces (driven by presentation)
+      output/      # repository/gateway interfaces (implemented in infra)
+    dtos/          # data transfer objects used across layers
+  infra/
+    repositories/  # Prisma implementations of output ports
+    consumers/     # RabbitMQ consumers
+    modules/       # NestJS DI wiring
+  presentation/
+    grpc/          # gRPC controllers
+    graphql/       # GraphQL resolvers (BFF only)
+    gateways/      # WebSocket gateways
+    presenters/    # map domain entities to response DTOs
+```
+
+Use cases receive ports via constructor injection and must not import infra or presentation directly.
 
 ---
 
-## Project Structure
+## BFF specifics
 
-```text
+- DataLoaders (`src/infra/graphql/loaders/`) batch and cache calls to downstream gRPC services to avoid N+1 patterns.
+- Auth guards (`src/infra/graphql/auth/guards/`) protect resolvers.
+- Metrics are exposed at `/metrics` via `prom-client`.
+
+---
+
+## Conversation service specifics
+
+- Prisma schema: `src/infra/database/prisma/schema.prisma` (models: `Conversation`, `Message`, `Participant`, `Invite`; PostgreSQL with UUIDs)
+- Generated client output: `src/infra/database/generated/prisma/`
+- RabbitMQ consumer triggers message creation asynchronously.
+- Prisma v7: datasource URL must be in `prisma.config.ts`, not in `schema.prisma`.
+
+---
+
+## Agent service specifics
+
+- Two servers in a single process: gRPC (port 50053) and FastAPI/uvicorn (port 8000).
+- RAG pipeline: MongoDB for vector storage, Redis for conversation memory and result caching.
+- `USE_LOCAL_VECTOR_SEARCH=true` uses brute-force cosine similarity (numpy) — no Atlas required for development.
+
+---
+
+## User service specifics
+
+- gRPC server on port 7000 (configured via `grpc.server.port`).
+- Flyway manages schema migrations. See [INFRASTRUCTURE.md](./INFRASTRUCTURE.md) for the Docker workaround.
+- Prometheus metrics at `/metrics` (Spring Boot Actuator with Micrometer).
+
+---
+
+## Observability
+
+All services expose Prometheus metrics at `/metrics`. The full observability stack (Prometheus, Grafana, Loki, Promtail, and database exporters) is defined in `infra/observability/`. See [INFRASTRUCTURE.md](./INFRASTRUCTURE.md) for setup.
+
+---
+
+## Project structure
+
+```
 services/
-  bff/
-  user-service/
-  agent-service/
-  conversation-service/
-  ai-gateway/
+  bff/               NestJS — GraphQL entry point
+  conversation/      NestJS — conversation domain
+  user/              Spring Boot — user domain
+  agent/             Python  — AI agent + RAG
+
+apps/
+  web/               Next.js — frontend
 
 libs/
   shared utilities and types
 
-load-tests/
-  stress and performance tests
-
 infra/
-  docker and infrastructure configuration
+  docker/            per-component compose files (postgres, rabbitmq, redis, mongodb)
+  observability/     Prometheus, Grafana, Loki, Promtail, exporters
 ```
 
 ---
 
-## Design Principles
+## Technology stack
 
-- Separation of concerns
-- Independent deployability of services
-- Clear domain boundaries
-- Scalability and maintainability
-- Explicit service communication
-
----
-
-## Future Improvements
-
-- Event-driven architecture
-- Centralized logging and tracing
-- Rate limiting and security layers
-- Service discovery
-- Observability (metrics and monitoring)
+| Layer | Technology |
+|---|---|
+| API gateway | NestJS, GraphQL (Apollo Server) |
+| Service-to-service | gRPC, Protobuf |
+| Async messaging | RabbitMQ |
+| Real-time | Socket.IO |
+| Databases | PostgreSQL (Prisma / JPA), MongoDB (Motor), Redis |
+| AI / RAG | LangChain, OpenAI |
+| Observability | Prometheus, Grafana, Loki, Promtail |
+| Containerization | Docker, docker compose |
+| Package manager | pnpm (monorepo), uv (Python), Maven (Java) |

@@ -5,6 +5,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import type { Request } from 'express';
 import { BffCoreModule } from './infra/modules/bff-core.module';
 import { HealthModule } from './infra/modules/health.module';
+import { MetricsModule } from './infra/modules/metrics.module';
 import { AgentsByConversationLoaderFactory } from './infra/graphql/loaders/agents-by-conversation.loader.factory';
 import { ConversationsByUserLoaderFactory } from './infra/graphql/loaders/conversations-by-user.loader.factory';
 import type { GraphqlContext } from './presentation/graphql/context/graphql-context.types';
@@ -17,6 +18,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     BffCoreModule,
     HealthModule,
+    MetricsModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       imports: [BffCoreModule],

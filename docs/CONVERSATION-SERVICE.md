@@ -1,6 +1,6 @@
-# Conversation Service (Closed Chat)
+# Conversation Service
 
-NestJS service for managing conversations, messages, and invites in the closed chat. The primary communication is via gRPC, with PostgreSQL (Prisma) persistence, RabbitMQ message consumption, and HTTP observability.
+NestJS service for managing conversations, messages, and invites. The primary communication is via gRPC, with PostgreSQL (Prisma) persistence, RabbitMQ message consumption, and HTTP observability.
 
 ## Overview
 
@@ -11,7 +11,7 @@ Key features:
 - conversations with participants (`participantIds`)
 - messages per conversation with cursor pagination
 - invites with status (pending/accepted/rejected)
-- real-time notifications via WebSocket (gateway)
+- real-time notifications via WebSocket (Socket.IO)
 
 ## Architecture
 
@@ -23,25 +23,25 @@ Layered structure with dependency inversion:
 - `infra/repositories`: Prisma implementations
 - `infra/database/prisma`: schema, migrations, and seeders
 - `infra/consumers`: RabbitMQ consumers
-- `interface/grpc/controllers`: gRPC handlers
-- `interface/controllers`: HTTP observability endpoints
-- `interface/gateways`: WebSocket (Socket.IO)
-- `interface/presenters`: output mapping for gRPC
+- `presentation/grpc/controllers`: gRPC handlers
+- `presentation/controllers`: HTTP observability endpoints
+- `presentation/gateways`: WebSocket (Socket.IO)
+- `presentation/presenters`: output mapping for gRPC
 
 ## Technical Decisions
 
 - **gRPC instead of GraphQL**: typed Protobuf contract for service-to-service integration.
-- **Prisma + PostgreSQL**: relational persistence with migrations and seeders.
+- **Prisma v7 + PostgreSQL**: relational persistence with migrations. Datasource URL must be in `prisma.config.ts` — the `url` field is no longer accepted in `schema.prisma`.
 - **RabbitMQ**: async integration for message events.
 - **WebSocket (Socket.IO)**: real-time events for connected clients.
-- **Validation with class-validator**: input validation at the interface layer.
+- **Validation with class-validator**: input validation at the presentation layer.
 - **Prometheus**: metrics exposed via HTTP endpoint.
 
 ## Technologies
 
 - Node.js
 - NestJS
-- Prisma
+- Prisma v7
 - PostgreSQL
 - gRPC (grpc-js)
 - RabbitMQ (amqplib)
@@ -57,22 +57,24 @@ Supported environment variables:
 - `RABBITMQ_URL`
 - `RABBITMQ_QUEUE`
 - `PORT` (HTTP, default 3000)
-- `GRPC_PORT` (gRPC, default 50051)
+- `GRPC_PORT` (gRPC, default 50052)
 
 Example (Linux/macOS):
 
 ```bash
-export DATABASE_URL='postgresql://postgres:postgres@localhost:5432/conversation'
+export DATABASE_URL='postgresql://admin:admin@localhost:5432/conversation_db'
 export RABBITMQ_URL='amqp://localhost:5672'
 export RABBITMQ_QUEUE='conversation.queue'
 export PORT=3000
-export GRPC_PORT=50051
+export GRPC_PORT=50052
 ```
 
 ## How to run the service
 
 ```bash
+cd services/conversation
 pnpm install
+npx prisma migrate dev
 pnpm start:dev
 ```
 
@@ -81,7 +83,7 @@ Ports and endpoints:
 - HTTP: `http://localhost:3000`
 - Health: `http://localhost:3000/health`
 - Metrics: `http://localhost:3000/metrics`
-- gRPC: `0.0.0.0:50051`
+- gRPC: `0.0.0.0:50052`
 
 ## How to run tests
 
@@ -104,7 +106,7 @@ k6 run test/stress/flow-edit-conversation.ts
 
 Proto file:
 
-- `services/conversation/src/interface/grpc/conversation.proto`
+- `services/conversation/src/presentation/grpc/conversation.proto`
 
 Exposed services:
 
