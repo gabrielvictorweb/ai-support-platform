@@ -5,9 +5,9 @@ collectDefaultMetrics();
 
 @Controller('metrics')
 export class MetricsController {
-    @Get()
-    @Header('Content-Type', 'text/plain; version=0.0.4; charset=utf-8')
-    getMetrics(): Promise<string> {
-        return register.metrics();
-    }
+  @Get()
+  @Header('Content-Type', register.contentType)
+  getMetrics(): Promise<string> {
+    return register.metrics();
+  }
 }
