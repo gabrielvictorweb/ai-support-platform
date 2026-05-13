@@ -1,35 +1,74 @@
-import { Injectable } from '@nestjs/common';
-import { AgentReadPort } from '../../application/ports/output/agent-read.port';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import type { ClientGrpc } from '@nestjs/microservices';
+import { firstValueFrom, type Observable } from 'rxjs';
+
 import { type AgentOutput, toAgentOutput } from '../../application/dtos';
+import type { AgentReadPort } from '../../application/ports/output/agent-read.port';
 import { AgentEntity } from '../../domain/entities/agent.entity';
 
-const AGENTS = [
-  new AgentEntity('a1', 'c1', 'SupportBot'),
-  new AgentEntity('a2', 'c1', 'AnalystBot'),
-  new AgentEntity('a3', 'c2', 'HelperBot'),
-];
+interface AgentMessage {
+  id: string;
+  conversationId: string;
+  name: string;
+  systemPrompt?: string;
+  model?: string;
+}
+
+interface ConversationAgentsMessage {
+  conversationId: string;
+  agents: AgentMessage[];
+}
+
+interface GetAgentsByConversationIdsResponse {
+  items: ConversationAgentsMessage[];
+}
+
+interface AgentServiceClient {
+  getAgentsByConversationIds(request: {
+    conversationIds: string[];
+  }): Observable<GetAgentsByConversationIdsResponse>;
+}
 
 @Injectable()
-export class AgentsGrpcClient implements AgentReadPort {
+export class AgentsGrpcClient implements AgentReadPort, OnModuleInit {
+  private readonly logger = new Logger(AgentsGrpcClient.name);
+  private agentService?: AgentServiceClient;
+
+  constructor(
+    @Inject('AGENTS_GRPC_CLIENT')
+    private readonly grpcClient: ClientGrpc,
+  ) {}
+
+  onModuleInit(): void {
+    this.agentService =
+      this.grpcClient.getService<AgentServiceClient>('AgentService');
+  }
+
   async findByConversationIds(
     conversationIds: string[],
   ): Promise<Map<string, AgentOutput[]>> {
-    const conversationIdSet = new Set(conversationIds);
-    const result = new Map<string, AgentOutput[]>();
+    const result = new Map<string, AgentOutput[]>(
+      conversationIds.map((id) => [id, []]),
+    );
 
-    for (const conversationId of conversationIds) {
-      result.set(conversationId, []);
+    if (!this.agentService) {
+      this.logger.warn('Agent Service unavailable — returning empty maps');
+      return result;
     }
 
-    for (const agent of AGENTS) {
-      if (!conversationIdSet.has(agent.conversationId)) {
-        continue;
-      }
+    try {
+      const response = await firstValueFrom(
+        this.agentService.getAgentsByConversationIds({ conversationIds }),
+      );
 
-      const conversationAgents = result.get(agent.conversationId);
-      if (conversationAgents) {
-        conversationAgents.push(toAgentOutput(agent));
+      for (const item of response.items ?? []) {
+        const agents = (item.agents ?? []).map((a) =>
+          toAgentOutput(new AgentEntity(a.id, a.conversationId, a.name)),
+        );
+        result.set(item.conversationId, agents);
       }
+    } catch (err) {
+      this.logger.error('Failed to fetch agents from Agent Service', err);
     }
 
     return result;

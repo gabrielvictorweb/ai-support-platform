@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package agent;
+
+service AgentService {
+    rpc GetAgentsByConversationIds(GetAgentsByConversationIdsRequest)
+        returns (GetAgentsByConversationIdsResponse);
+    rpc CreateAgent(CreateAgentRequest) returns (AgentResponse);
+    rpc GetAgent(GetAgentRequest) returns (AgentResponse);
+    rpc ListAgents(ListAgentsRequest) returns (ListAgentsResponse);
+    rpc UpdateAgent(UpdateAgentRequest) returns (AgentResponse);
+    rpc DeleteAgent(DeleteAgentRequest) returns (DeleteResult);
+}
+
+service RagService {
+    rpc IngestDocuments(IngestDocumentsRequest) returns (IngestDocumentsResponse);
+    rpc QueryAgent(QueryAgentRequest) returns (QueryAgentResponse);
+}
+
+message Agent {
+    string id = 1;
+    string conversation_id = 2;
+    string name = 3;
+    string system_prompt = 4;
+    string model = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+message DeleteResult {
+    bool success = 1;
+}
+
+message GetAgentsByConversationIdsRequest {
+    repeated string conversation_ids = 1;
+}
+
+message ConversationAgents {
+    string conversation_id = 1;
+    repeated Agent agents = 2;
+}
+
+message GetAgentsByConversationIdsResponse {
+    repeated ConversationAgents items = 1;
+}
+
+message CreateAgentRequest {
+    string conversation_id = 1;
+    string name = 2;
+    string system_prompt = 3;
+    string model = 4;
+}
+
+message GetAgentRequest {
+    string id = 1;
+}
+
+message ListAgentsRequest {
+    string conversation_id = 1;
+}
+
+message ListAgentsResponse {
+    repeated Agent agents = 1;
+}
+
+message UpdateAgentRequest {
+    string id = 1;
+    string name = 2;
+    string system_prompt = 3;
+    string model = 4;
+}
+
+message DeleteAgentRequest {
+    string id = 1;
+}
+
+message AgentResponse {
+    Agent agent = 1;
+}
+
+message Document {
+    string content = 1;
+    string source = 2;
+    map<string, string> metadata = 3;
+}
+
+message IngestDocumentsRequest {
+    string agent_id = 1;
+    repeated Document documents = 2;
+}
+
+message IngestDocumentsResponse {
+    int32 ingested_count = 1;
+    repeated string chunk_ids = 2;
+}
+
+message QueryAgentRequest {
+    string agent_id = 1;
+    string conversation_id = 2;
+    string query = 3;
+    int32 top_k = 4;
+}
+
+message RetrievedChunk {
+    string chunk_id = 1;
+    string content = 2;
+    float score = 3;
+    string source = 4;
+}
+
+message QueryAgentResponse {
+    string answer = 1;
+    repeated RetrievedChunk sources = 2;
+}
