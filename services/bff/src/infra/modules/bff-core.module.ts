@@ -45,6 +45,18 @@ import { UsersResolver } from '../../presentation/graphql/resolvers/users.resolv
           url: process.env.CONVERSATIONS_GRPC_URL ?? 'localhost:50052',
         },
       },
+      {
+        name: 'AGENTS_GRPC_CLIENT',
+        transport: Transport.GRPC,
+        options: {
+          package: 'agent',
+          protoPath: join(
+            process.cwd(),
+            'src/presentation/grpc/proto/agents.proto',
+          ),
+          url: process.env.AGENTS_GRPC_URL ?? 'localhost:50053',
+        },
+      },
     ]),
   ],
   providers: [

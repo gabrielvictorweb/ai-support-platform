@@ -36,6 +36,31 @@ npx prisma migrate dev   # apply DB migrations
 npx prisma generate      # regenerate Prisma client
 ```
 
+### Agent Service (`services/agent`)
+
+Python service — requires a virtual environment (Ubuntu PEP 668).
+
+```bash
+uv venv .venv          # create venv (first time only)
+uv pip install -e ".[dev]"  # install all dependencies
+.venv/bin/python -m pytest tests/ -v  # unit tests
+```
+
+Regenerate gRPC stubs after editing `agents.proto`:
+```bash
+.venv/bin/python -m grpc_tools.protoc \
+  -I src/presentation/grpc \
+  --python_out=src/presentation/grpc/generated \
+  --grpc_python_out=src/presentation/grpc/generated \
+  src/presentation/grpc/agents.proto
+```
+
+Start the service:
+```bash
+cp .env.example .env   # fill OPENAI_API_KEY
+.venv/bin/python -m src.main
+```
+
 ### Web App (`apps/web`)
 
 ```bash
@@ -50,6 +75,7 @@ pnpm lint    # ESLint
 docker compose -f infra/docker/postgres/docker-compose.yml up -d
 docker compose -f infra/docker/rabbitmq/docker-compose.yml up -d
 docker compose -f infra/docker/redis/docker-compose.yml up -d
+docker compose -f infra/docker/mongodb/docker-compose.yml up -d
 ```
 
 ## Architecture
