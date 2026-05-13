@@ -1,30 +1,139 @@
 # Infrastructure
 
-## Postgres via Docker
+All infrastructure components run in Docker and must join the shared `ai-support` network so that application services and exporters can resolve each other by container name.
 
-Before starting local services, you must start the Postgres container via Docker. This ensures services that depend on the database can boot correctly.
+---
 
-### Steps
+## Shared network
 
-1. Enter the Postgres compose directory:
+Create the network once before starting anything:
 
-   ```bash
-   cd infra/docker/postgres
-   ```
+```bash
+docker network create ai-support
+```
 
-2. Start the container:
+---
 
-   ```bash
-   docker compose up -d
-   ```
+## Infrastructure services
 
-3. Check container health:
+Each component has its own compose file under `infra/docker/`. Start them all before running the application:
 
-   ```bash
-   docker compose ps
-   ```
+```bash
+docker compose -f infra/docker/postgres/docker-compose.yml up -d
+docker compose -f infra/docker/rabbitmq/docker-compose.yml up -d
+docker compose -f infra/docker/redis/docker-compose.yml up -d
+docker compose -f infra/docker/mongodb/docker-compose.yml up -d
+```
 
-### Notes
+| Component | Container | Host port |
+|---|---|---|
+| PostgreSQL (user-db) | `postgres-user-db-1` | 5433 |
+| PostgreSQL (conversation-db) | `postgres-conversation-db-1` | 5432 |
+| RabbitMQ | `ai-support-rabbitmq` | 5672, 15672, 15692 |
+| Redis | `ai-support-redis` | 6379 |
+| MongoDB | `ai-support-mongodb` | 27017 |
 
-- Start Postgres before running local services.
-- To stop the container: `docker compose down`.
+RabbitMQ exposes Prometheus metrics natively on port `15692` via the `rabbitmq_prometheus` plugin (already enabled in the compose file).
+
+---
+
+## Application services
+
+The root `docker-compose.yml` builds and runs all four application services:
+
+```bash
+docker compose up -d
+```
+
+| Service | Container | Host ports |
+|---|---|---|
+| BFF | `ai-support-bff` | 3000 (HTTP/GraphQL) |
+| Conversation | `ai-support-conversation` | 3002 → internal 3000 |
+| User | `ai-support-user` | 8080 (HTTP), 7000 (gRPC) |
+| Agent | `ai-support-agent` | 8000 (HTTP), 50053 (gRPC) |
+
+The conversation service runs Prisma migrations automatically on startup.
+
+### User service — first run
+
+The user service uses Flyway for schema migrations. Due to a known issue with Flyway autoconfiguration in Spring Boot 4.0.x, migrations may not run automatically inside Docker. If the container exits with a schema validation error, apply the migration manually:
+
+```bash
+docker exec -i postgres-user-db-1 psql -U admin -d user_db \
+  < services/user/src/main/resources/db/migration/V1__users_id_to_uuid.sql
+docker compose up -d --force-recreate user
+```
+
+---
+
+## Observability stack
+
+The observability stack runs from `infra/observability/docker-compose.yml` and must be started after the shared network exists:
+
+```bash
+docker compose -f infra/observability/docker-compose.yml up -d
+```
+
+| Component | Container | Host port | Role |
+|---|---|---|---|
+| Prometheus | `ai-support-prometheus` | 9091 | Metrics scraping |
+| Grafana | `ai-support-grafana` | 3001 | Dashboards |
+| Loki | `ai-support-loki` | 3102 | Log storage |
+| Promtail | `ai-support-promtail` | — | Log collection from Docker socket |
+| postgres-exporter (user-db) | `ai-support-postgres-exporter-user` | 9187 | PostgreSQL metrics |
+| postgres-exporter (conversation-db) | `ai-support-postgres-exporter-conversation` | 9188 | PostgreSQL metrics |
+| MongoDB exporter | `ai-support-mongodb-exporter` | 9216 | MongoDB metrics |
+| Redis exporter | `ai-support-redis-exporter` | 9121 | Redis metrics |
+
+Grafana starts fully pre-configured: Prometheus and Loki datasources are provisioned automatically, along with dashboards for Node.js, Spring Boot, Python, PostgreSQL, MongoDB, Redis, and RabbitMQ.
+
+Access:
+
+- Grafana: http://localhost:3001 (admin / admin)
+- Prometheus: http://localhost:9091
+- Prometheus targets: http://localhost:9091/targets
+
+### Filtering logs by service in Grafana
+
+Open Explore → Loki and query by container name:
+
+```logql
+{container="ai-support-conversation"}
+{container="ai-support-bff"}
+{container="ai-support-user"}
+{container="ai-support-agent"}
+```
+
+---
+
+## Metrics endpoints
+
+Each application service exposes a `/metrics` endpoint in Prometheus text format:
+
+| Service | URL |
+|---|---|
+| BFF | http://localhost:3000/metrics |
+| Conversation | http://localhost:3002/metrics |
+| User | http://localhost:8080/metrics |
+| Agent | http://localhost:8000/metrics |
+
+---
+
+## Full startup order
+
+```bash
+# 1. shared network
+docker network create ai-support
+
+# 2. infrastructure
+docker compose -f infra/docker/postgres/docker-compose.yml up -d
+docker compose -f infra/docker/rabbitmq/docker-compose.yml up -d
+docker compose -f infra/docker/redis/docker-compose.yml up -d
+docker compose -f infra/docker/mongodb/docker-compose.yml up -d
+
+# 3. application services
+docker compose up -d
+
+# 4. observability
+docker compose -f infra/observability/docker-compose.yml up -d
+```
