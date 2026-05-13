@@ -1,0 +1,93 @@
+{
+  "title": "Platform Overview",
+  "uid": "platform-overview",
+  "tags": ["overview", "platform"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Services Status",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": {"calcs": ["lastNotNull"]}
+      },
+      "targets": [
+        {"expr": "up{job=\"bff\"}", "legendFormat": "BFF"},
+        {"expr": "up{job=\"conversation\"}", "legendFormat": "Conversation"},
+        {"expr": "up{job=\"agent\"}", "legendFormat": "Agent"},
+        {"expr": "up{job=\"user\"}", "legendFormat": "User"},
+        {"expr": "up{job=\"rabbitmq\"}", "legendFormat": "RabbitMQ"},
+        {"expr": "up{job=\"redis\"}", "legendFormat": "Redis"},
+        {"expr": "up{job=\"postgres-user\"}", "legendFormat": "Postgres (user)"},
+        {"expr": "up{job=\"postgres-conversation\"}", "legendFormat": "Postgres (conv)"},
+        {"expr": "up{job=\"mongodb\"}", "legendFormat": "MongoDB"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {"options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}, "type": "value"}
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "HTTP Request Rate — all services",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "sum(rate(http_requests_total{job=\"bff\"}[5m]))", "legendFormat": "bff"},
+        {"expr": "sum(rate(http_requests_total{job=\"conversation\"}[5m]))", "legendFormat": "conversation"},
+        {"expr": "sum(rate(http_requests_total{job=\"agent\"}[5m]))", "legendFormat": "agent"}
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Error Rate — 5xx",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{job=\"bff\", status_code=~\"5..\"}[5m]))",
+          "legendFormat": "bff 5xx"
+        },
+        {
+          "expr": "sum(rate(http_requests_total{job=\"conversation\", status_code=~\"5..\"}[5m]))",
+          "legendFormat": "conversation 5xx"
+        },
+        {
+          "expr": "sum(rate(http_requests_total{job=\"agent\", status_code=~\"5..\"}[5m]))",
+          "legendFormat": "agent 5xx"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Service Logs",
+      "type": "logs",
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 12},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {
+          "expr": "{project=\"observability\"} |= ``",
+          "legendFormat": ""
+        }
+      ],
+      "options": {
+        "dedupStrategy": "none",
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      }
+    }
+  ]
+}

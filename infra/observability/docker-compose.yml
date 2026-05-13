@@ -1,0 +1,110 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ai-support-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    networks:
+      - ai-support
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ai-support-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - ai-support
+
+  loki:
+    image: grafana/loki:latest
+    container_name: ai-support-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/loki-config.yml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - ai-support
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: ai-support-promtail
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/promtail-config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/promtail-config.yml
+    depends_on:
+      - loki
+    networks:
+      - ai-support
+
+  postgres-exporter-user:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: ai-support-postgres-exporter-user
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://admin:admin@user-db:5432/user_db?sslmode=disable"
+    networks:
+      - ai-support
+
+  postgres-exporter-conversation:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: ai-support-postgres-exporter-conversation
+    ports:
+      - "9188:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://admin:admin@conversation-db:5432/conversation_db?sslmode=disable"
+    networks:
+      - ai-support
+
+  mongodb-exporter:
+    image: percona/mongodb_exporter:0.40
+    container_name: ai-support-mongodb-exporter
+    ports:
+      - "9216:9216"
+    environment:
+      MONGODB_URI: "mongodb://admin:admin@ai-support-mongodb:27017"
+    command: --mongodb.uri=mongodb://admin:admin@ai-support-mongodb:27017 --collect-all
+    networks:
+      - ai-support
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: ai-support-redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      REDIS_ADDR: "redis://ai-support-redis:6379"
+    networks:
+      - ai-support
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+
+networks:
+  ai-support:
+    external: true

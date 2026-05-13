@@ -1,0 +1,41 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: bff
+    static_configs:
+      - targets: ["bff:3000"]
+
+  - job_name: conversation
+    static_configs:
+      - targets: ["conversation:3000"]
+
+  - job_name: agent
+    static_configs:
+      - targets: ["agent:8000"]
+
+  - job_name: user
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["user:8080"]
+
+  - job_name: postgres-user
+    static_configs:
+      - targets: ["postgres-exporter-user:9187"]
+
+  - job_name: postgres-conversation
+    static_configs:
+      - targets: ["postgres-exporter-conversation:9187"]
+
+  - job_name: mongodb
+    static_configs:
+      - targets: ["mongodb-exporter:9216"]
+
+  - job_name: redis
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+
+  - job_name: rabbitmq
+    static_configs:
+      - targets: ["ai-support-rabbitmq:15692"]
