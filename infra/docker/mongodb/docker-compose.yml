@@ -17,6 +17,12 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+        networks:
+            - ai-support
 
 volumes:
     mongodb_data:
+
+networks:
+    ai-support:
+        external: true
