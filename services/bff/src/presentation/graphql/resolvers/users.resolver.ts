@@ -9,7 +9,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { APP_TOKENS } from '../../../application/tokens';
-import { GetCurrentUserUseCase } from '../../../application/usecases/get-current-user.usecase';
+import { GetOrProvisionUserUseCase } from '../../../application/usecases/get-or-provision-user.usecase';
 import { ListUsersUseCase } from '../../../application/usecases/list-users.usecase';
 import { ConversationPresenter, UserPresenter } from '../../presenters';
 import { GraphqlAuthGuard } from '../../../infra/graphql/auth/guards/graphql-auth.guard';
@@ -20,8 +20,8 @@ import { UserDto } from '../dto/user.dto';
 @Resolver(() => UserDto)
 export class UsersResolver {
   constructor(
-    @Inject(APP_TOKENS.GET_CURRENT_USER_USE_CASE)
-    private readonly getCurrentUserUseCase: GetCurrentUserUseCase,
+    @Inject(APP_TOKENS.GET_OR_PROVISION_USER_USE_CASE)
+    private readonly getOrProvisionUserUseCase: GetOrProvisionUserUseCase,
     @Inject(APP_TOKENS.LIST_USERS_USE_CASE)
     private readonly listUsersUseCase: ListUsersUseCase,
   ) {}
@@ -29,8 +29,10 @@ export class UsersResolver {
   @UseGuards(GraphqlAuthGuard)
   @Query(() => UserDto)
   async me(@Context() context: GraphqlContext): Promise<UserDto> {
-    const user = await this.getCurrentUserUseCase.execute({
-      userId: context.user!.userId,
+    const user = await this.getOrProvisionUserUseCase.execute({
+      externalId: context.user!.userId,
+      name: context.user!.name,
+      email: context.user!.email,
     });
 
     return UserPresenter.toGraphql(user);

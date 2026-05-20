@@ -10,8 +10,10 @@ export const toUserOutput = (user: UserEntity): UserOutput => ({
   name: user.name,
 });
 
-export interface GetCurrentUserDto {
-  userId: string;
+export interface GetOrProvisionUserDto {
+  externalId: string;
+  name?: string;
+  email?: string;
 }
 
 export interface ListUsersDto {
