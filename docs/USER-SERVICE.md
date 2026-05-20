@@ -48,11 +48,19 @@ Layered structure with dependency inversion:
 
 Supported environment variables:
 
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
+| Variable | Description |
+|---|---|
+| `DB_URL` | JDBC connection URL |
+| `DB_USERNAME` | Database username |
+| `DB_PASSWORD` | Database password |
+| `GRPC_TLS_ENABLED` | Enable mTLS on the gRPC server (`true` / `false`, default `false`) |
+| `GRPC_CA_CERT` | Path to CA certificate (required when TLS is enabled) |
+| `GRPC_SERVER_KEY` | Path to server private key (required when TLS is enabled) |
+| `GRPC_SERVER_CERT` | Path to server certificate (required when TLS is enabled) |
 
-Example (Linux/macOS):
+mTLS is disabled by default in local development. Set `GRPC_TLS_ENABLED=true` and provide the cert paths to enable it. See [INFRASTRUCTURE.md](../docs/INFRASTRUCTURE.md) for cert generation.
+
+Example (Linux/macOS, local development):
 
 ```bash
 export DB_URL='jdbc:postgresql://localhost:5433/user_db'
@@ -94,17 +102,21 @@ Methods:
 - `FindAllUsers`
 - `FindUserById`
 - `FindUserByEmail`
+- `FindUserByExternalId`
 - `CreateUser`
 - `UpdateUser`
 - `DeleteUser`
 
 Note: `id` fields are transferred as `string` in UUID format.
 
+`FindUserByExternalId` looks up a user by the `external_id` field — a generic identifier that links the internal user record to an external identity provider (e.g. Auth0 `sub`). This keeps the user service decoupled from any specific provider.
+
 ## Database migrations
 
-Schema migrations are managed by Flyway. The migration file is at:
+Schema migrations are managed by Flyway. Migration files:
 
-- `src/main/resources/db/migration/V1__users_id_to_uuid.sql`
+- `src/main/resources/db/migration/V1__users_id_to_uuid.sql` — converts `id` column to UUID
+- `src/main/resources/db/migration/V2__add_external_id_to_users.sql` — adds `external_id` column with a unique constraint
 
 ### Local development
 
