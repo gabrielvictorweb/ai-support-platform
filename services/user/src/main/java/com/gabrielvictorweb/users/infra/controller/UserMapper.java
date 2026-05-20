@@ -10,10 +10,10 @@ public final class UserMapper {
     }
 
     public static User toDomain(UserInput input) {
-        return new User(null, input.name(), input.email(), input.phone());
+        return new User(null, input.name(), input.email(), input.phone(), input.externalId());
     }
 
     public static UserResponse toResponse(User user) {
-        return new UserResponse(user.id(), user.name(), user.email(), user.phone());
+        return new UserResponse(user.id(), user.name(), user.email(), user.phone(), user.externalId());
     }
 }
