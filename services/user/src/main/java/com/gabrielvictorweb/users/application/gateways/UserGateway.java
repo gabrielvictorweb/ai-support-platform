@@ -20,4 +20,6 @@ public interface UserGateway {
     boolean existsByEmail(String email);
 
     boolean existsByEmailAndIdNot(String email, UUID id);
+
+    Optional<User> findByExternalId(String externalId);
 }

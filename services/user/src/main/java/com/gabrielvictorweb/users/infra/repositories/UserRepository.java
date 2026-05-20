@@ -90,16 +90,27 @@ public class UserRepository implements UserGateway {
         return count > 0;
     }
 
+    @Override
+    public Optional<User> findByExternalId(String externalId) {
+        List<UserEntity> users = entityManager
+                .createQuery("select u from UserEntity u where u.externalId = :externalId", UserEntity.class)
+                .setParameter("externalId", externalId)
+                .setMaxResults(1)
+                .getResultList();
+        return users.isEmpty() ? Optional.empty() : Optional.of(toDomain(users.getFirst()));
+    }
+
     private UserEntity toEntity(User user) {
         UserEntity entity = new UserEntity();
         entity.setId(user.id());
         entity.setName(user.name());
         entity.setEmail(user.email());
         entity.setPhone(user.phone());
+        entity.setExternalId(user.externalId());
         return entity;
     }
 
     private User toDomain(UserEntity entity) {
-        return new User(entity.getId(), entity.getName(), entity.getEmail(), entity.getPhone());
+        return new User(entity.getId(), entity.getName(), entity.getEmail(), entity.getPhone(), entity.getExternalId());
     }
 }

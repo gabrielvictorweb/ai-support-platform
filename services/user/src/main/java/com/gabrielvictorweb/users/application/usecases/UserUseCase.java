@@ -22,7 +22,7 @@ public class UserUseCase {
             throw new DuplicateEmailException("Email already in use: " + user.email());
         }
 
-        User userToSave = new User(null, user.name(), user.email(), user.phone());
+        User userToSave = new User(null, user.name(), user.email(), user.phone(), user.externalId());
         return userGateway.save(userToSave);
     }
 
@@ -42,7 +42,7 @@ public class UserUseCase {
             throw new DuplicateEmailException("Email already in use: " + user.email());
         }
 
-        User updatedUser = new User(existingUser.id(), user.name(), user.email(), user.phone());
+        User updatedUser = new User(existingUser.id(), user.name(), user.email(), user.phone(), existingUser.externalId());
         return userGateway.save(updatedUser);
     }
 
