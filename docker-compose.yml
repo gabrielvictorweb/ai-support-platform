@@ -12,6 +12,13 @@ services:
       USERS_GRPC_URL: user:7000
       CONVERSATIONS_GRPC_URL: conversation:50052
       AGENTS_GRPC_URL: agent:50053
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      GRPC_CA_CERT: /app/certs/ca.crt
+      GRPC_CLIENT_KEY: /app/certs/bff-client.key
+      GRPC_CLIENT_CERT: /app/certs/bff-client.crt
+    volumes:
+      - ./infra/certs:/app/certs:ro
     depends_on:
       - user
       - conversation
@@ -32,6 +39,11 @@ services:
       RABBITMQ_QUEUE: conversation.queue
       GRPC_PORT: "50052"
       PORT: "3000"
+      GRPC_CA_CERT: /app/certs/ca.crt
+      GRPC_SERVER_KEY: /app/certs/conversation-server.key
+      GRPC_SERVER_CERT: /app/certs/conversation-server.crt
+    volumes:
+      - ./infra/certs:/app/certs:ro
     command: sh -c "npx prisma migrate deploy && node dist/src/main"
     networks:
       - ai-support
@@ -46,6 +58,12 @@ services:
       DB_URL: jdbc:postgresql://user-db:5432/user_db
       DB_USERNAME: admin
       DB_PASSWORD: admin
+      GRPC_TLS_ENABLED: "true"
+      GRPC_CA_CERT: /app/certs/ca.crt
+      GRPC_SERVER_KEY: /app/certs/user-server.key
+      GRPC_SERVER_CERT: /app/certs/user-server.crt
+    volumes:
+      - ./infra/certs:/app/certs:ro
     networks:
       - ai-support
 
@@ -64,6 +82,11 @@ services:
       REDIS_URL: redis://ai-support-redis:6379
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       USE_LOCAL_VECTOR_SEARCH: "true"
+      GRPC_CA_CERT: /app/certs/ca.crt
+      GRPC_SERVER_KEY: /app/certs/agent-server.key
+      GRPC_SERVER_CERT: /app/certs/agent-server.crt
+    volumes:
+      - ./infra/certs:/app/certs:ro
     networks:
       - ai-support
 
