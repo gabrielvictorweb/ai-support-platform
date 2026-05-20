@@ -32,12 +32,14 @@ public class UserRepository implements UserGateway {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findById(UUID id) {
         UserEntity entity = entityManager.find(UserEntity.class, id);
         return Optional.ofNullable(entity).map(this::toDomain);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findByEmail(String email) {
         List<UserEntity> users = entityManager
                 .createQuery("select u from UserEntity u where u.email = :email", UserEntity.class)
@@ -53,6 +55,7 @@ public class UserRepository implements UserGateway {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> findAll() {
         return entityManager
                 .createQuery("select u from UserEntity u", UserEntity.class)
@@ -72,6 +75,7 @@ public class UserRepository implements UserGateway {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         Long count = entityManager
                 .createQuery("select count(u) from UserEntity u where u.email = :email", Long.class)
@@ -81,6 +85,7 @@ public class UserRepository implements UserGateway {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsByEmailAndIdNot(String email, UUID id) {
         Long count = entityManager
                 .createQuery("select count(u) from UserEntity u where u.email = :email and u.id <> :id", Long.class)
@@ -91,6 +96,7 @@ public class UserRepository implements UserGateway {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findByExternalId(String externalId) {
         List<UserEntity> users = entityManager
                 .createQuery("select u from UserEntity u where u.externalId = :externalId", UserEntity.class)
