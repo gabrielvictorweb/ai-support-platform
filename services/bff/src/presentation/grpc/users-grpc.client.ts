@@ -1,7 +1,10 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom, Observable } from 'rxjs';
-import { UserReadPort } from '../../application/ports/output/user-read.port';
+import {
+  type CreateUserData,
+  UserReadPort,
+} from '../../application/ports/output/user-read.port';
 import { type UserOutput, toUserOutput } from '../../application/dtos';
 import { UserEntity } from '../../domain/entities/user.entity';
 
@@ -18,6 +21,7 @@ interface UserMessage {
   name: string;
   email?: string;
   phone?: string;
+  externalId?: string;
 }
 
 interface FindAllUsersResponse {
@@ -27,6 +31,12 @@ interface FindAllUsersResponse {
 interface UserServiceClient {
   findAllUsers(request: EmptyRequest): Observable<FindAllUsersResponse>;
   findUserById(request: { id: string }): Observable<UserMessage>;
+  findUserByExternalId(request: {
+    externalId: string;
+  }): Observable<UserMessage>;
+  createUser(request: {
+    input: { name: string; email: string; phone: string; externalId: string };
+  }): Observable<UserMessage>;
 }
 
 @Injectable()
@@ -95,6 +105,38 @@ export class UsersGrpcClient implements UserReadPort, OnModuleInit {
       this.logger.error('Failed to fetch users from User Service', err);
       return USERS.filter((user) => uniqueIds.has(user.id));
     }
+  }
+
+  async findByExternalId(externalId: string): Promise<UserOutput | null> {
+    if (!this.userService) return null;
+
+    try {
+      const user = await firstValueFrom(
+        this.userService.findUserByExternalId({ externalId }),
+      );
+      return this.toOutput(user);
+    } catch {
+      return null;
+    }
+  }
+
+  async create(data: CreateUserData): Promise<UserOutput> {
+    if (!this.userService) {
+      throw new Error('User Service unavailable');
+    }
+
+    const user = await firstValueFrom(
+      this.userService.createUser({
+        input: {
+          name: data.name,
+          email: data.email,
+          phone: '',
+          externalId: data.externalId,
+        },
+      }),
+    );
+
+    return this.toOutput(user);
   }
 
   private toOutput(message: UserMessage): UserOutput {

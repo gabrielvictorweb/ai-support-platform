@@ -119,6 +119,55 @@ Each application service exposes a `/metrics` endpoint in Prometheus text format
 
 ---
 
+## mTLS certificates
+
+Service-to-service gRPC communication is secured with mutual TLS in containerized environments. A script generates all required certificates:
+
+```bash
+bash infra/certs/gen-certs.sh
+```
+
+This creates the following files under `infra/certs/`:
+
+| File | Purpose |
+|---|---|
+| `ca.crt` / `ca.key` | Internal CA |
+| `bff-client.crt` / `bff-client.key` | BFF client certificate |
+| `user-server.crt` / `user-server.key` | User service server certificate |
+| `conversation-server.crt` / `conversation-server.key` | Conversation service server certificate |
+| `agent-server.crt` / `agent-server.key` | Agent service server certificate |
+
+The `infra/certs/` directory is added to `.gitignore`. In production, use a secrets manager (Vault, AWS ACM, etc.).
+
+### Local development (without Docker)
+
+TLS is disabled by default when cert env vars are absent. To enable it locally, generate the certs and set:
+
+**BFF** (`services/bff/.env`):
+
+```
+GRPC_CA_CERT=../../infra/certs/ca.crt
+GRPC_CLIENT_KEY=../../infra/certs/bff-client.key
+GRPC_CLIENT_CERT=../../infra/certs/bff-client.crt
+```
+
+**User service** (`services/user/src/main/resources/application-local.properties`):
+
+```properties
+GRPC_TLS_ENABLED=true
+GRPC_CA_CERT=../../infra/certs/ca.crt
+GRPC_SERVER_KEY=../../infra/certs/user-server.key
+GRPC_SERVER_CERT=../../infra/certs/user-server.crt
+```
+
+**Conversation and Agent services** — set the equivalent `GRPC_CA_CERT`, `GRPC_SERVER_KEY`, and `GRPC_SERVER_CERT` env vars pointing to their respective cert files.
+
+### Docker
+
+The root `docker-compose.yml` mounts `./infra/certs` as a read-only volume in each service and sets the env vars automatically. Run `gen-certs.sh` once before `docker compose up`.
+
+---
+
 ## Full startup order
 
 ```bash

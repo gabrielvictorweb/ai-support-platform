@@ -4,6 +4,7 @@ import com.gabrielvictorweb.users.infra.factory.CreateUserControllerFactory;
 import com.gabrielvictorweb.users.infra.factory.DeleteUserControllerFactory;
 import com.gabrielvictorweb.users.infra.factory.FindAllUsersControllerFactory;
 import com.gabrielvictorweb.users.infra.factory.FindUserByEmailControllerFactory;
+import com.gabrielvictorweb.users.infra.factory.FindUserByExternalIdControllerFactory;
 import com.gabrielvictorweb.users.infra.factory.FindUserByIdControllerFactory;
 import com.gabrielvictorweb.users.infra.factory.UpdateUserControllerFactory;
 import com.gabrielvictorweb.users.infra.grpc.generated.CreateUserRequest;
@@ -12,6 +13,7 @@ import com.gabrielvictorweb.users.infra.grpc.generated.DeleteUserResponse;
 import com.gabrielvictorweb.users.infra.grpc.generated.Empty;
 import com.gabrielvictorweb.users.infra.grpc.generated.FindAllUsersResponse;
 import com.gabrielvictorweb.users.infra.grpc.generated.FindUserByEmailRequest;
+import com.gabrielvictorweb.users.infra.grpc.generated.FindUserByExternalIdRequest;
 import com.gabrielvictorweb.users.infra.grpc.generated.FindUserByIdRequest;
 import com.gabrielvictorweb.users.infra.grpc.generated.UpdateUserRequest;
 import com.gabrielvictorweb.users.infra.grpc.generated.UserServiceGrpc;
@@ -26,6 +28,7 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
     private final DeleteUserControllerFactory deleteUserControllerFactory;
     private final FindAllUsersControllerFactory findAllUsersControllerFactory;
     private final FindUserByEmailControllerFactory findUserByEmailControllerFactory;
+    private final FindUserByExternalIdControllerFactory findUserByExternalIdControllerFactory;
     private final FindUserByIdControllerFactory findUserByIdControllerFactory;
     private final UpdateUserControllerFactory updateUserControllerFactory;
 
@@ -34,6 +37,7 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
             DeleteUserControllerFactory deleteUserControllerFactory,
             FindAllUsersControllerFactory findAllUsersControllerFactory,
             FindUserByEmailControllerFactory findUserByEmailControllerFactory,
+            FindUserByExternalIdControllerFactory findUserByExternalIdControllerFactory,
             FindUserByIdControllerFactory findUserByIdControllerFactory,
             UpdateUserControllerFactory updateUserControllerFactory
     ) {
@@ -41,6 +45,7 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
         this.deleteUserControllerFactory = deleteUserControllerFactory;
         this.findAllUsersControllerFactory = findAllUsersControllerFactory;
         this.findUserByEmailControllerFactory = findUserByEmailControllerFactory;
+        this.findUserByExternalIdControllerFactory = findUserByExternalIdControllerFactory;
         this.findUserByIdControllerFactory = findUserByIdControllerFactory;
         this.updateUserControllerFactory = updateUserControllerFactory;
     }
@@ -64,6 +69,13 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
     @Override
     public void findUserByEmail(FindUserByEmailRequest request, StreamObserver<com.gabrielvictorweb.users.infra.grpc.generated.UserMessage> responseObserver) {
         var response = UserGrpcMapper.toMessage(findUserByEmailControllerFactory.create().execute(request.getEmail()));
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void findUserByExternalId(FindUserByExternalIdRequest request, StreamObserver<com.gabrielvictorweb.users.infra.grpc.generated.UserMessage> responseObserver) {
+        var response = UserGrpcMapper.toMessage(findUserByExternalIdControllerFactory.create().execute(request.getExternalId()));
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

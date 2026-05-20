@@ -3,6 +3,8 @@ import { AgentOutput, ConversationOutput } from '../../../application/dtos';
 
 export interface AuthenticatedUser {
   userId: string;
+  name?: string;
+  email?: string;
 }
 
 export interface GraphqlLoaders {
@@ -11,6 +13,7 @@ export interface GraphqlLoaders {
 }
 
 export interface GraphqlContext {
+  token?: string;
   user?: AuthenticatedUser;
   loaders: GraphqlLoaders;
 }

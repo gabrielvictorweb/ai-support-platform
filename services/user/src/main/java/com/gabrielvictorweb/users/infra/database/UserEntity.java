@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_users_email", columnNames = "email")
+        @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
+        @UniqueConstraint(name = "uk_users_external_id", columnNames = "external_id")
 })
 public class UserEntity {
 
@@ -27,6 +28,9 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String phone;
+
+    @Column(name = "external_id")
+    private String externalId;
 
     public UUID getId() {
         return id;
@@ -58,5 +62,13 @@ public class UserEntity {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 }

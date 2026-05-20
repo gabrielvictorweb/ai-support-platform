@@ -1,4 +1,6 @@
 import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import * as grpc from '@grpc/grpc-js';
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import type { AgentReadPort } from '../../application/ports/output/agent-read.port';
@@ -7,7 +9,7 @@ import type { UserReadPort } from '../../application/ports/output/user-read.port
 import { APP_TOKENS } from '../../application/tokens';
 import { GetAgentsByConversationIdsUseCase } from '../../application/usecases/get-agents-by-conversation-ids.usecase';
 import { GetConversationsByUserIdsUseCase } from '../../application/usecases/get-conversations-by-user-ids.usecase';
-import { GetCurrentUserUseCase } from '../../application/usecases/get-current-user.usecase';
+import { GetOrProvisionUserUseCase } from '../../application/usecases/get-or-provision-user.usecase';
 import { ListUsersUseCase } from '../../application/usecases/list-users.usecase';
 import { AgentsGrpcClient } from '../../presentation/grpc/agents-grpc.client';
 import { ConversationsGrpcClient } from '../../presentation/grpc/conversations-grpc.client';
@@ -17,9 +19,29 @@ import { AgentsByConversationLoaderFactory } from '../graphql/loaders/agents-by-
 import { ConversationsByUserLoaderFactory } from '../graphql/loaders/conversations-by-user.loader.factory';
 import { ConversationsResolver } from '../../presentation/graphql/resolvers/conversations.resolver';
 import { UsersResolver } from '../../presentation/graphql/resolvers/users.resolver';
+import { AuthModule } from '../auth/auth.module';
+
+function buildGrpcCredentials(): grpc.ChannelCredentials {
+  const ca = process.env.GRPC_CA_CERT;
+  const key = process.env.GRPC_CLIENT_KEY;
+  const cert = process.env.GRPC_CLIENT_CERT;
+
+  if (ca && key && cert) {
+    return grpc.credentials.createSsl(
+      readFileSync(ca),
+      readFileSync(key),
+      readFileSync(cert),
+    );
+  }
+
+  return grpc.credentials.createInsecure();
+}
+
+const grpcCredentials = buildGrpcCredentials();
 
 @Module({
   imports: [
+    AuthModule,
     ClientsModule.register([
       {
         name: 'USERS_GRPC_CLIENT',
@@ -31,6 +53,7 @@ import { UsersResolver } from '../../presentation/graphql/resolvers/users.resolv
             'src/presentation/grpc/proto/users.proto',
           ),
           url: process.env.USERS_GRPC_URL ?? 'localhost:50051',
+          credentials: grpcCredentials,
         },
       },
       {
@@ -43,6 +66,7 @@ import { UsersResolver } from '../../presentation/graphql/resolvers/users.resolv
             'src/presentation/grpc/proto/conversation.proto',
           ),
           url: process.env.CONVERSATIONS_GRPC_URL ?? 'localhost:50052',
+          credentials: grpcCredentials,
         },
       },
       {
@@ -55,6 +79,7 @@ import { UsersResolver } from '../../presentation/graphql/resolvers/users.resolv
             'src/presentation/grpc/proto/agents.proto',
           ),
           url: process.env.AGENTS_GRPC_URL ?? 'localhost:50053',
+          credentials: grpcCredentials,
         },
       },
     ]),
@@ -81,9 +106,9 @@ import { UsersResolver } from '../../presentation/graphql/resolvers/users.resolv
       useExisting: AgentsGrpcClient,
     },
     {
-      provide: APP_TOKENS.GET_CURRENT_USER_USE_CASE,
+      provide: APP_TOKENS.GET_OR_PROVISION_USER_USE_CASE,
       useFactory: (userReadPort: UserReadPort) =>
-        new GetCurrentUserUseCase(userReadPort),
+        new GetOrProvisionUserUseCase(userReadPort),
       inject: [APP_TOKENS.USER_READ_PORT],
     },
     {

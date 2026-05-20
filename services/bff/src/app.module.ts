@@ -32,12 +32,15 @@ import { ConfigModule } from '@nestjs/config';
       ): ApolloDriverConfig => ({
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         context: ({ req }: { req: Request }): GraphqlContext => {
-          const userIdHeader = req.headers['x-user-id'];
-          const userId =
-            typeof userIdHeader === 'string' ? userIdHeader.trim() : undefined;
+          const authHeader = req.headers['authorization'];
+          const token =
+            typeof authHeader === 'string' && authHeader.startsWith('Bearer ')
+              ? authHeader.slice(7)
+              : undefined;
 
           return {
-            user: userId ? { userId } : undefined,
+            token,
+            user: undefined,
             loaders: {
               conversationsByUserId: conversationsByUserLoaderFactory.create(),
               agentsByConversationId:
