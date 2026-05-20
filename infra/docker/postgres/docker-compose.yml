@@ -1,27 +1,91 @@
 version: "3.8"
 
+# Replicação streaming (master/slave) via bitnami/postgresql:15.
+# A replica acompanha o primary com pg_basebackup automático na primeira
+# subida; precisa do healthcheck para evitar race.
+
+x-replication: &replication
+    POSTGRESQL_REPLICATION_USER: repl_user
+    POSTGRESQL_REPLICATION_PASSWORD: repl_pass
+    POSTGRESQL_USERNAME: admin
+    POSTGRESQL_PASSWORD: admin
+
 services:
-    user-db:
-        image: postgres:15
+    user-db-primary:
+        image: bitnami/postgresql:15
         environment:
-            POSTGRES_USER: admin
-            POSTGRES_PASSWORD: admin
-            POSTGRES_DB: user_db
+            <<: *replication
+            POSTGRESQL_REPLICATION_MODE: master
+            POSTGRESQL_DATABASE: user_db
         ports:
             - "5433:5432"
+        volumes:
+            - user-db-primary-data:/bitnami/postgresql
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d user_db"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
         networks:
             - ai-support
 
-    conversation-db:
-        image: postgres:15
+    user-db-replica:
+        image: bitnami/postgresql:15
         environment:
-            POSTGRES_USER: admin
-            POSTGRES_PASSWORD: admin
-            POSTGRES_DB: conversation_db
+            <<: *replication
+            POSTGRESQL_REPLICATION_MODE: slave
+            POSTGRESQL_MASTER_HOST: user-db-primary
+            POSTGRESQL_MASTER_PORT_NUMBER: 5432
         ports:
-            - "5434:5432"
+            - "5443:5432"
+        volumes:
+            - user-db-replica-data:/bitnami/postgresql
+        depends_on:
+            user-db-primary:
+                condition: service_healthy
         networks:
             - ai-support
+
+    conversation-db-primary:
+        image: bitnami/postgresql:15
+        environment:
+            <<: *replication
+            POSTGRESQL_REPLICATION_MODE: master
+            POSTGRESQL_DATABASE: conversation_db
+        ports:
+            - "5434:5432"
+        volumes:
+            - conversation-db-primary-data:/bitnami/postgresql
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d conversation_db"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+        networks:
+            - ai-support
+
+    conversation-db-replica:
+        image: bitnami/postgresql:15
+        environment:
+            <<: *replication
+            POSTGRESQL_REPLICATION_MODE: slave
+            POSTGRESQL_MASTER_HOST: conversation-db-primary
+            POSTGRESQL_MASTER_PORT_NUMBER: 5432
+        ports:
+            - "5444:5432"
+        volumes:
+            - conversation-db-replica-data:/bitnami/postgresql
+        depends_on:
+            conversation-db-primary:
+                condition: service_healthy
+        networks:
+            - ai-support
+
+volumes:
+    user-db-primary-data:
+    user-db-replica-data:
+    conversation-db-primary-data:
+    conversation-db-replica-data:
 
 networks:
     ai-support:
