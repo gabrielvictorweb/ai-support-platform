@@ -9,6 +9,16 @@ import {
 } from '../../application/ports/output/conversation.output';
 import { PrismaService } from '../database/prisma/prisma.service';
 
+type ParticipantModel = {
+    findMany(args: {
+        where: { conversationId: string };
+    }): Promise<Array<{ userId: string }>>;
+    createMany(args: {
+        data: Array<{ conversationId: string; userId: string }>;
+    }): Promise<unknown>;
+    deleteMany(args: { where: { conversationId: string } }): Promise<unknown>;
+};
+
 @Injectable()
 export class ConversationRepository
     implements
@@ -20,32 +30,16 @@ export class ConversationRepository
 {
     constructor(private readonly prisma: PrismaService) {}
 
-    private get participantModel(): {
-        findMany(args: {
-            where: { conversationId: string };
-        }): Promise<Array<{ userId: string }>>;
-        createMany(args: {
-            data: Array<{ conversationId: string; userId: string }>;
-        }): Promise<unknown>;
-        deleteMany(args: {
-            where: { conversationId: string };
-        }): Promise<unknown>;
-    } {
-        return (
-            this.prisma as unknown as {
-                participant: {
-                    findMany(args: {
-                        where: { conversationId: string };
-                    }): Promise<Array<{ userId: string }>>;
-                    createMany(args: {
-                        data: Array<{ conversationId: string; userId: string }>;
-                    }): Promise<unknown>;
-                    deleteMany(args: {
-                        where: { conversationId: string };
-                    }): Promise<unknown>;
-                };
-            }
-        ).participant;
+    private participantsOn(client: unknown): ParticipantModel {
+        return (client as { participant: ParticipantModel }).participant;
+    }
+
+    private get writerParticipants(): ParticipantModel {
+        return this.participantsOn(this.prisma.client);
+    }
+
+    private get readerParticipants(): ParticipantModel {
+        return this.participantsOn(this.prisma.client.$replica());
     }
 
     async create(
@@ -55,7 +49,7 @@ export class ConversationRepository
             new Set(conversation.participantIds ?? []),
         );
 
-        const created = await this.prisma.conversation.create({
+        const created = await this.prisma.client.conversation.create({
             data: {
                 createdAt: conversation.createdAt ?? new Date(),
                 updatedAt: conversation.updatedAt ?? new Date(),
@@ -63,7 +57,7 @@ export class ConversationRepository
         });
 
         if (participantIds.length > 0) {
-            await this.participantModel.createMany({
+            await this.writerParticipants.createMany({
                 data: participantIds.map((userId) => ({
                     conversationId: created.id,
                     userId,
@@ -80,15 +74,17 @@ export class ConversationRepository
     }
 
     async findById(id: string): Promise<Conversation | null> {
-        const found = await this.prisma.conversation.findUnique({
-            where: { id },
-        });
+        const found = await this.prisma.client
+            .$replica()
+            .conversation.findUnique({
+                where: { id },
+            });
 
         if (!found) {
             return null;
         }
 
-        const participants = await this.participantModel.findMany({
+        const participants = await this.readerParticipants.findMany({
             where: { conversationId: id },
         });
 
@@ -103,11 +99,13 @@ export class ConversationRepository
     }
 
     async findAll(): Promise<Conversation[]> {
-        const items = await this.prisma.conversation.findMany();
+        const items = await this.prisma.client
+            .$replica()
+            .conversation.findMany();
 
         return Promise.all(
             items.map(async (item) => {
-                const participants = await this.participantModel.findMany({
+                const participants = await this.readerParticipants.findMany({
                     where: { conversationId: item.id },
                 });
 
@@ -132,7 +130,7 @@ export class ConversationRepository
             : undefined;
 
         try {
-            const updated = await this.prisma.conversation.update({
+            const updated = await this.prisma.client.conversation.update({
                 where: { id },
                 data: {
                     updatedAt: new Date(),
@@ -140,12 +138,12 @@ export class ConversationRepository
             });
 
             if (participantIds !== undefined) {
-                await this.participantModel.deleteMany({
+                await this.writerParticipants.deleteMany({
                     where: { conversationId: id },
                 });
 
                 if (participantIds.length > 0) {
-                    await this.participantModel.createMany({
+                    await this.writerParticipants.createMany({
                         data: participantIds.map((userId) => ({
                             conversationId: id,
                             userId,
@@ -154,7 +152,8 @@ export class ConversationRepository
                 }
             }
 
-            const participants = await this.participantModel.findMany({
+            // Lê do primary para não ver lista incompleta por lag de replicação.
+            const participants = await this.writerParticipants.findMany({
                 where: { conversationId: id },
             });
 
@@ -173,7 +172,7 @@ export class ConversationRepository
 
     async delete(id: string): Promise<boolean> {
         try {
-            await this.prisma.conversation.delete({
+            await this.prisma.client.conversation.delete({
                 where: { id },
             });
             return true;

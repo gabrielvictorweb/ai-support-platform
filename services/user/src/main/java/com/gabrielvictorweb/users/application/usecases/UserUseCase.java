@@ -7,6 +7,7 @@ import com.gabrielvictorweb.users.domain.User;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserUseCase {
@@ -26,10 +27,12 @@ public class UserUseCase {
         return userGateway.save(userToSave);
     }
 
+    @Transactional(readOnly = true)
     public List<User> findAll() {
         return userGateway.findAll();
     }
 
+    @Transactional(readOnly = true)
     public User findById(UUID id) {
         return userGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));

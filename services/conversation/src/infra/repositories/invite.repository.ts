@@ -23,7 +23,7 @@ export class InviteRepository
     async create(
         data: Omit<Invite, 'id' | 'status' | 'createdAt' | 'updatedAt'>,
     ): Promise<Invite> {
-        const created = await this.prisma.invite.create({
+        const created = await this.prisma.client.invite.create({
             data: {
                 conversationId: data.conversationId,
                 userId: data.userId,
@@ -42,7 +42,9 @@ export class InviteRepository
     }
 
     async findById(id: string): Promise<Invite | null> {
-        const found = await this.prisma.invite.findUnique({ where: { id } });
+        const found = await this.prisma.client
+            .$replica()
+            .invite.findUnique({ where: { id } });
         if (!found) return null;
 
         return {
@@ -56,7 +58,7 @@ export class InviteRepository
     }
 
     async findByConversationId(conversationId: string): Promise<Invite[]> {
-        const items = await this.prisma.invite.findMany({
+        const items = await this.prisma.client.$replica().invite.findMany({
             where: { conversationId },
         });
 
@@ -75,7 +77,7 @@ export class InviteRepository
         status: InviteStatus,
     ): Promise<Invite | null> {
         try {
-            const updated = await this.prisma.invite.update({
+            const updated = await this.prisma.client.invite.update({
                 where: { id },
                 data: { status },
             });
@@ -95,7 +97,7 @@ export class InviteRepository
 
     async delete(id: string): Promise<boolean> {
         try {
-            await this.prisma.invite.delete({ where: { id } });
+            await this.prisma.client.invite.delete({ where: { id } });
             return true;
         } catch {
             return false;

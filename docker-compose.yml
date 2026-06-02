@@ -34,7 +34,8 @@ services:
       - "3002:3000"
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://admin:admin@conversation-db:5432/conversation_db
+      DATABASE_URL: postgresql://admin:admin@conversation-db-primary:5432/conversation_db
+      DATABASE_REPLICA_URL: postgresql://admin:admin@conversation-db-replica:5432/conversation_db
       RABBITMQ_URL: amqp://admin:admin@ai-support-rabbitmq:5672
       RABBITMQ_QUEUE: conversation.queue
       GRPC_PORT: "50052"
@@ -55,7 +56,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DB_URL: jdbc:postgresql://user-db:5432/user_db
+      DB_URL: jdbc:postgresql://user-db-primary:5432/user_db
+      DB_REPLICA_URL: jdbc:postgresql://user-db-replica:5432/user_db
       DB_USERNAME: admin
       DB_PASSWORD: admin
       GRPC_TLS_ENABLED: "true"

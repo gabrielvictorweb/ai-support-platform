@@ -57,7 +57,7 @@ export class MessageRepository
     }
 
     async create(message: Omit<Message, 'id'>): Promise<Message> {
-        const created = await this.prisma.message.create({
+        const created = await this.prisma.client.message.create({
             data: {
                 conversationId: message.conversationId,
                 content: message.content,
@@ -70,7 +70,7 @@ export class MessageRepository
     }
 
     async findById(id: string): Promise<Message | null> {
-        const found = await this.prisma.message.findUnique({
+        const found = await this.prisma.client.$replica().message.findUnique({
             where: { id },
         });
 
@@ -87,7 +87,7 @@ export class MessageRepository
     ): Promise<MessageCursorPaginationResult> {
         const take = pagination.limit + 1;
 
-        const items = await this.prisma.message.findMany({
+        const items = await this.prisma.client.$replica().message.findMany({
             where: { conversationId },
             orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
             ...(pagination.cursor
@@ -110,7 +110,7 @@ export class MessageRepository
     ): Promise<MessageCursorPaginationResult> {
         const take = pagination.limit + 1;
 
-        const items = await this.prisma.message.findMany({
+        const items = await this.prisma.client.$replica().message.findMany({
             orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
             ...(pagination.cursor
                 ? {
@@ -129,7 +129,7 @@ export class MessageRepository
 
     async update(id: string, data: Partial<Message>): Promise<Message | null> {
         try {
-            const updated = await this.prisma.message.update({
+            const updated = await this.prisma.client.message.update({
                 where: { id },
                 data: {
                     content: data.content,
@@ -145,7 +145,7 @@ export class MessageRepository
 
     async delete(id: string): Promise<boolean> {
         try {
-            await this.prisma.message.delete({
+            await this.prisma.client.message.delete({
                 where: { id },
             });
             return true;
