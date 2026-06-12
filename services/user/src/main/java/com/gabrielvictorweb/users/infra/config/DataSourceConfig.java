@@ -2,7 +2,7 @@ package com.gabrielvictorweb.users.infra.config;
 
 import java.util.Map;
 import javax.sql.DataSource;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,15 +20,19 @@ public class DataSourceConfig {
     }
 
     @Bean
-    @ConfigurationProperties("spring.datasource")
-    public DataSource masterDataSource() {
-        return DataSourceBuilder.create().build();
+    public DataSource masterDataSource(
+            @Value("${spring.datasource.url}") String url,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password) {
+        return DataSourceBuilder.create().url(url).username(username).password(password).build();
     }
 
     @Bean
-    @ConfigurationProperties("spring.datasource.replica")
-    public DataSource replicaDataSource() {
-        return DataSourceBuilder.create().build();
+    public DataSource replicaDataSource(
+            @Value("${spring.datasource.replica.url}") String url,
+            @Value("${spring.datasource.replica.username}") String username,
+            @Value("${spring.datasource.replica.password}") String password) {
+        return DataSourceBuilder.create().url(url).username(username).password(password).build();
     }
 
     @Bean
