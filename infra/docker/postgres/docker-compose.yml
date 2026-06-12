@@ -4,6 +4,8 @@ version: "3.8"
 # A replica acompanha o primary com pg_basebackup automático na primeira
 # subida; precisa do healthcheck para evitar race.
 
+x-postgres-image: &postgres-image bitnami/postgresql:latest
+
 x-replication: &replication
     POSTGRESQL_REPLICATION_USER: repl_user
     POSTGRESQL_REPLICATION_PASSWORD: repl_pass
@@ -12,7 +14,7 @@ x-replication: &replication
 
 services:
     user-db-primary:
-        image: bitnami/postgresql:15
+        image: *postgres-image
         environment:
             <<: *replication
             POSTGRESQL_REPLICATION_MODE: master
@@ -30,7 +32,7 @@ services:
             - ai-support
 
     user-db-replica:
-        image: bitnami/postgresql:15
+        image: *postgres-image
         environment:
             <<: *replication
             POSTGRESQL_REPLICATION_MODE: slave
@@ -47,7 +49,7 @@ services:
             - ai-support
 
     conversation-db-primary:
-        image: bitnami/postgresql:15
+        image: *postgres-image
         environment:
             <<: *replication
             POSTGRESQL_REPLICATION_MODE: master
@@ -65,7 +67,7 @@ services:
             - ai-support
 
     conversation-db-replica:
-        image: bitnami/postgresql:15
+        image: *postgres-image
         environment:
             <<: *replication
             POSTGRESQL_REPLICATION_MODE: slave
