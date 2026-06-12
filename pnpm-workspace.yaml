@@ -2,3 +2,12 @@ packages:
     - "services/*"
     - "libs/*"
     - "apps/*"
+
+onlyBuiltDependencies:
+    - cypress
+    - "@prisma/engines"
+    - prisma
+    - protobufjs
+    - "@apollo/protobufjs"
+    - sharp
+    - unrs-resolver
