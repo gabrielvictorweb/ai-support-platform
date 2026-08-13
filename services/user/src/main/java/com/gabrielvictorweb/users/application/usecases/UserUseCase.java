@@ -23,7 +23,8 @@ public class UserUseCase {
             throw new DuplicateEmailException("Email already in use: " + user.email());
         }
 
-        User userToSave = new User(null, user.name(), user.email(), user.phone(), user.externalId());
+        String role = (user.role() == null || user.role().isBlank()) ? "USER" : user.role();
+        User userToSave = new User(null, user.name(), user.email(), user.phone(), user.externalId(), role);
         return userGateway.save(userToSave);
     }
 
@@ -45,7 +46,9 @@ public class UserUseCase {
             throw new DuplicateEmailException("Email already in use: " + user.email());
         }
 
-        User updatedUser = new User(existingUser.id(), user.name(), user.email(), user.phone(), existingUser.externalId());
+        // role em branco no update = preserva o atual (não rebaixa por engano).
+        String role = (user.role() == null || user.role().isBlank()) ? existingUser.role() : user.role();
+        User updatedUser = new User(existingUser.id(), user.name(), user.email(), user.phone(), existingUser.externalId(), role);
         return userGateway.save(updatedUser);
     }
 

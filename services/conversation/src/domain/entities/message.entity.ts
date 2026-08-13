@@ -3,6 +3,8 @@ export class Message {
 
     conversationId: string;
 
+    senderId: string | null;
+
     content: string;
 
     createdAt: Date;

@@ -34,6 +34,7 @@ describe('GetMessageUseCase', () => {
         const mockMessage: Message = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'Test',
             createdAt: new Date(),
             updatedAt: new Date(),

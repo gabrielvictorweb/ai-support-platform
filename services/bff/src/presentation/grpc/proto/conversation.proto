@@ -40,6 +40,7 @@ message Message {
     string content = 3;
     string createdAt = 4;
     string updatedAt = 5;
+    string senderId = 6;
 }
 
 message Invite {
@@ -87,6 +88,7 @@ message DeleteConversationRequest {
 message CreateMessageRequest {
     string conversationId = 1;
     string content = 2;
+    string senderId = 3;
 }
 
 message GetMessageRequest {

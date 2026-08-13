@@ -9,6 +9,9 @@ export class UserDto {
   @Field()
   name!: string;
 
+  @Field()
+  role!: string;
+
   @Field(() => [ConversationDto])
   conversations!: ConversationDto[];
 }

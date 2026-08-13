@@ -40,6 +40,7 @@ describe('ListMessagesByConversationUseCase', () => {
             {
                 id: 'msg-1',
                 conversationId: input.conversationId,
+                senderId: null,
                 content: 'Message 1',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -47,6 +48,7 @@ describe('ListMessagesByConversationUseCase', () => {
             {
                 id: 'msg-2',
                 conversationId: input.conversationId,
+                senderId: null,
                 content: 'Message 2',
                 createdAt: new Date(),
                 updatedAt: new Date(),

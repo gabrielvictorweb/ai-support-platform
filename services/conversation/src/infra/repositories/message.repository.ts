@@ -27,6 +27,7 @@ export class MessageRepository
     private mapMessage(item: {
         id: string;
         conversationId: string;
+        senderId: string | null;
         content: string;
         createdAt: Date;
         updatedAt: Date;
@@ -34,6 +35,7 @@ export class MessageRepository
         return {
             id: item.id,
             conversationId: item.conversationId,
+            senderId: item.senderId,
             content: item.content,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
@@ -60,6 +62,7 @@ export class MessageRepository
         const created = await this.prisma.client.message.create({
             data: {
                 conversationId: message.conversationId,
+                senderId: message.senderId ?? null,
                 content: message.content,
                 createdAt: message.createdAt ?? new Date(),
                 updatedAt: message.updatedAt ?? new Date(),

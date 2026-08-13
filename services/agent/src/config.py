@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     rag_cache_ttl_seconds: int = 300
     conversation_memory_ttl_seconds: int = 3600
     use_local_vector_search: bool = True
+    # Modo dev: substitui OpenAI/embeddings/Redis por fakes offline, para o
+    # QueryAgent funcionar sem chave nem infra de IA (só Mongo p/ os agents).
+    use_stub_llm: bool = True
     memory_summarize_after_turns: int = 20
     memory_turns_to_summarize: int = 10
 

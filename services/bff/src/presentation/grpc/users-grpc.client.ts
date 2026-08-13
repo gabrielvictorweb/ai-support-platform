@@ -9,9 +9,9 @@ import { type UserOutput, toUserOutput } from '../../application/dtos';
 import { UserEntity } from '../../domain/entities/user.entity';
 
 const USERS: UserOutput[] = [
-  { id: 'u1', name: 'Ana Silva' },
-  { id: 'u2', name: 'Bruno Costa' },
-  { id: 'u3', name: 'Carla Souza' },
+  { id: 'u1', name: 'Ana Silva', role: 'USER' },
+  { id: 'u2', name: 'Bruno Costa', role: 'USER' },
+  { id: 'u3', name: 'Carla Souza', role: 'USER' },
 ];
 
 type EmptyRequest = object;
@@ -22,6 +22,7 @@ interface UserMessage {
   email?: string;
   phone?: string;
   externalId?: string;
+  role?: string;
 }
 
 interface FindAllUsersResponse {
@@ -35,7 +36,13 @@ interface UserServiceClient {
     externalId: string;
   }): Observable<UserMessage>;
   createUser(request: {
-    input: { name: string; email: string; phone: string; externalId: string };
+    input: {
+      name: string;
+      email: string;
+      phone: string;
+      externalId: string;
+      role: string;
+    };
   }): Observable<UserMessage>;
 }
 
@@ -132,6 +139,7 @@ export class UsersGrpcClient implements UserReadPort, OnModuleInit {
           email: data.email,
           phone: '',
           externalId: data.externalId,
+          role: data.role,
         },
       }),
     );
@@ -140,6 +148,8 @@ export class UsersGrpcClient implements UserReadPort, OnModuleInit {
   }
 
   private toOutput(message: UserMessage): UserOutput {
-    return toUserOutput(new UserEntity(message.id, message.name));
+    return toUserOutput(
+      new UserEntity(message.id, message.name, message.role ?? 'USER'),
+    );
   }
 }

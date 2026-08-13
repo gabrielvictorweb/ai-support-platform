@@ -141,6 +141,7 @@ describe('Message gRPC (e2e)', () => {
         const output: MessageOutput = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'hello',
             createdAt: new Date('2025-01-01T00:00:00.000Z'),
             updatedAt: new Date('2025-01-02T00:00:00.000Z'),
@@ -162,6 +163,7 @@ describe('Message gRPC (e2e)', () => {
         const output: MessageOutput = {
             id: 'msg-2',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'hello',
             createdAt: new Date('2025-01-01T00:00:00.000Z'),
             updatedAt: new Date('2025-01-02T00:00:00.000Z'),
@@ -184,6 +186,7 @@ describe('Message gRPC (e2e)', () => {
                 {
                     id: 'msg-3',
                     conversationId: 'conv-1',
+                    senderId: null,
                     content: 'hello',
                     createdAt: new Date('2025-01-01T00:00:00.000Z'),
                     updatedAt: new Date('2025-01-02T00:00:00.000Z'),
@@ -211,6 +214,7 @@ describe('Message gRPC (e2e)', () => {
                 {
                     id: 'msg-4',
                     conversationId: 'conv-2',
+                    senderId: null,
                     content: 'hello',
                     createdAt: new Date('2025-01-01T00:00:00.000Z'),
                     updatedAt: new Date('2025-01-02T00:00:00.000Z'),
@@ -237,6 +241,7 @@ describe('Message gRPC (e2e)', () => {
         const output: MessageOutput = {
             id: 'msg-5',
             conversationId: 'conv-3',
+            senderId: null,
             content: 'updated',
             createdAt: new Date('2025-01-01T00:00:00.000Z'),
             updatedAt: new Date('2025-01-02T00:00:00.000Z'),

@@ -44,16 +44,31 @@ class Container(containers.DeclarativeContainer):
         api_key=settings.openai_api_key,
     )
 
-    rag_pipeline = providers.Singleton(RagPipeline, llm=llm)
     agent_repository = providers.Singleton(MongoAgentRepository, db=mongo_db)
-    vector_store = providers.Singleton(
-        MongoVectorStore,
-        embeddings=embeddings,
-        mongo_client=mongo_client,
-        db_name=settings.mongodb_db,
-    )
-    rag_cache = providers.Singleton(RagCache)
-    conversation_memory = providers.Singleton(ConversationMemory, llm=llm)
+
+    if settings.use_stub_llm:
+        # Modo dev: tudo offline, exceto o repositório de agents (Mongo).
+        from src.infra.langchain.fake_gateways import (
+            FakeConversationMemory,
+            FakeLlmGateway,
+            FakeRagCache,
+            FakeVectorStore,
+        )
+
+        rag_pipeline = providers.Singleton(FakeLlmGateway)
+        vector_store = providers.Singleton(FakeVectorStore)
+        rag_cache = providers.Singleton(FakeRagCache)
+        conversation_memory = providers.Singleton(FakeConversationMemory)
+    else:
+        rag_pipeline = providers.Singleton(RagPipeline, llm=llm)
+        vector_store = providers.Singleton(
+            MongoVectorStore,
+            embeddings=embeddings,
+            mongo_client=mongo_client,
+            db_name=settings.mongodb_db,
+        )
+        rag_cache = providers.Singleton(RagCache)
+        conversation_memory = providers.Singleton(ConversationMemory, llm=llm)
 
     get_agents_by_conversation_ids_uc = providers.Factory(
         GetAgentsByConversationIdsUseCase, repo=agent_repository

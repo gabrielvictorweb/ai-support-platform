@@ -32,6 +32,9 @@ public class UserEntity {
     @Column(name = "external_id")
     private String externalId;
 
+    @Column(nullable = false)
+    private String role = "USER";
+
     public UUID getId() {
         return id;
     }
@@ -70,5 +73,13 @@ public class UserEntity {
 
     public void setExternalId(String externalId) {
         this.externalId = externalId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

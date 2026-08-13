@@ -4,6 +4,7 @@ import { Message } from '../../domain/entities/message.entity';
 export interface MessageOutput {
     id: string;
     conversationId: string;
+    senderId: string | null;
     content: string;
     createdAt: Date;
     updatedAt: Date;
@@ -18,6 +19,7 @@ export interface MessageConnectionOutput {
 export const toMessageOutput = (message: Message): MessageOutput => ({
     id: message.id,
     conversationId: message.conversationId,
+    senderId: message.senderId ?? null,
     content: message.content,
     createdAt: message.createdAt,
     updatedAt: message.updatedAt,
@@ -33,6 +35,7 @@ export const toMessageConnectionOutput = (
 
 export interface CreateMessageDto {
     conversationId: string;
+    senderId?: string | null;
     content: string;
 }
 

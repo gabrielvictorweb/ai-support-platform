@@ -12,10 +12,37 @@ type Conversation {
 type User {
   id: ID!
   name: String!
+  role: String!
   conversations: [Conversation!]!
+}
+
+type Message {
+  id: ID!
+  conversationId: ID!
+  senderId: ID
+  content: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type AgentSource {
+  content: String!
+  source: String!
+  score: Float!
+}
+
+type AgentAnswer {
+  answer: String!
+  sources: [AgentSource!]!
 }
 
 type Query {
   me: User!
   users(ids: [ID!]): [User!]!
+  messages(conversationId: ID!): [Message!]!
+}
+
+type Mutation {
+  sendMessage(conversationId: ID!, content: String!): Message!
+  askAgent(query: String!): AgentAnswer!
 }

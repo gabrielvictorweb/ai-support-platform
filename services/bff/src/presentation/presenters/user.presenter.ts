@@ -6,6 +6,7 @@ export class UserPresenter {
     return {
       id: user.id,
       name: user.name,
+      role: user.role,
       conversations: [],
     };
   }

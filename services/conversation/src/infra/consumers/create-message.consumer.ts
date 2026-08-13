@@ -26,6 +26,7 @@ export class CreateMessageConsumer {
         try {
             const createdMessage = await this.createMessageUseCase.execute({
                 conversationId: event.conversationId,
+                senderId: event.senderId ?? null,
                 content: event.content,
             });
 

@@ -10,6 +10,7 @@ describe('ChatGateway', () => {
         const message: MessageOutput = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'hello',
             createdAt: new Date(),
             updatedAt: new Date(),

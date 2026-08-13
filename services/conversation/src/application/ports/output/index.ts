@@ -12,6 +12,8 @@ export {
     type IFindMessages,
     type IFindMessagesByConversationId,
     type IUpdateMessage,
+    type MessageCursorPaginationInput,
+    type MessageCursorPaginationResult,
 } from './message.output';
 export {
     type ICreateInvite,

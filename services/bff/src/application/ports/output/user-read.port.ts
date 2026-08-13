@@ -1,9 +1,10 @@
-import { UserOutput } from '../../dtos';
+import { UserOutput, UserRole } from '../../dtos';
 
 export interface CreateUserData {
   externalId: string;
   name: string;
   email: string;
+  role: UserRole;
 }
 
 export interface UserReadPort {

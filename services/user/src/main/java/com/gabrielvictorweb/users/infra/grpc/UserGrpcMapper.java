@@ -12,11 +12,13 @@ public final class UserGrpcMapper {
 
     public static UserInput toInput(UserInputMessage inputMessage) {
         String externalId = inputMessage.getExternalId();
+        String role = inputMessage.getRole();
         return new UserInput(
                 inputMessage.getName(),
                 inputMessage.getEmail(),
                 inputMessage.getPhone(),
-                externalId.isBlank() ? null : externalId
+                externalId.isBlank() ? null : externalId,
+                role.isBlank() ? null : role
         );
     }
 
@@ -27,6 +29,7 @@ public final class UserGrpcMapper {
                 .setEmail(response.email())
                 .setPhone(response.phone())
                 .setExternalId(response.externalId() == null ? "" : response.externalId())
+                .setRole(response.role() == null ? "USER" : response.role())
                 .build();
     }
 }

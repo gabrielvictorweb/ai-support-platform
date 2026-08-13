@@ -1,0 +1,29 @@
+- main [ref=f3e3]:
+  - generic [ref=f3e4]:
+    - generic [ref=f3e8]:
+      - generic [ref=f3e9]:
+        - img "dev-8j1qvrnk0d1i6qbp" [ref=f3e10]
+        - heading "Welcome" [level=1] [ref=f3e11]
+        - paragraph [ref=f3e13]: Log in to dev-8j1qvrnk0d1i6qbp to continue to ai-support-platform.
+      - generic [ref=f3e14]:
+        - generic [ref=f3e15]:
+          - generic [ref=f3e18]:
+            - generic [ref=f3e20]:
+              - generic [ref=f3e21]: Email address *
+              - textbox "Email address" [ref=f3e22]
+            - generic [ref=f3e24]:
+              - generic [ref=f3e25]: Password *
+              - textbox "Password" [ref=f3e26]
+              - switch "Show password" [ref=f3e27] [cursor=pointer]
+          - paragraph [ref=f3e28]:
+            - link "Reset password" [ref=f3e29] [cursor=pointer]:
+              - /url: /u/login/password-reset-start/Username-Password-Authentication?state=hKFo2SBkczBLVXBPY0MxVDcxcG1IOE45dXJQYnB4Vkx2QTZPLaFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIG5TR0txcTNKOUJQZE96REt6YXE1QU4zMkJlbk9aQXE2o2NpZNkgWWs1QktOU1RQRlZCSzlFZENuYmZkamxBZjNYa3FpRmE
+          - button "Continue" [ref=f3e31] [cursor=pointer]
+        - paragraph [ref=f3e33]:
+          - text: Don't have an account?
+          - link "Sign up" [ref=f3e34] [cursor=pointer]:
+            - /url: /u/signup?state=hKFo2SBkczBLVXBPY0MxVDcxcG1IOE45dXJQYnB4Vkx2QTZPLaFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIG5TR0txcTNKOUJQZE96REt6YXE1QU4zMkJlbk9aQXE2o2NpZNkgWWs1QktOU1RQRlZCSzlFZENuYmZkamxBZjNYa3FpRmE
+        - generic [ref=f3e35]: Or
+        - button "Continue with Google" [ref=f3e39] [cursor=pointer]
+    - link "Link to the Auth0 website" [ref=f3e42] [cursor=pointer]:
+      - /url: https://auth0.com/?utm_source=lock&utm_campaign=badge&utm_medium=widget

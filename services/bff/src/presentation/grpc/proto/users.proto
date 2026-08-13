@@ -23,6 +23,7 @@ message UserInputMessage {
   string email = 2;
   string phone = 3;
   string external_id = 4;
+  string role = 5;
 }
 
 message UserMessage {
@@ -31,6 +32,7 @@ message UserMessage {
   string email = 3;
   string phone = 4;
   string external_id = 5;
+  string role = 6;
 }
 
 message FindUserByExternalIdRequest {

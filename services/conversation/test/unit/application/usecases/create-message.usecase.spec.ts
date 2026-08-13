@@ -32,12 +32,14 @@ describe('CreateMessageUseCase', () => {
     it('should create a message with conversationId and content', async () => {
         const input: CreateMessageDto = {
             conversationId: 'conv-1',
+            senderId: null,
             content: 'Test message',
         };
 
         const mockMessage: Message = {
             id: 'msg-1',
             conversationId: input.conversationId,
+            senderId: null,
             content: input.content,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -51,6 +53,7 @@ describe('CreateMessageUseCase', () => {
         expect(createMessage.create).toHaveBeenCalledWith(
             expect.objectContaining({
                 conversationId: input.conversationId,
+                senderId: null,
                 content: input.content,
                 createdAt: expect.any(Date),
                 updatedAt: expect.any(Date),

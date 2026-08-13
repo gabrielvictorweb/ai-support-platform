@@ -17,6 +17,7 @@ export class CreateMessageUseCase implements CreateMessageInputPort {
     async execute(input: CreateMessageDto): Promise<MessageOutput> {
         const message = await this.createMessage.create({
             conversationId: input.conversationId,
+            senderId: input.senderId ?? null,
             content: input.content,
             createdAt: new Date(),
             updatedAt: new Date(),

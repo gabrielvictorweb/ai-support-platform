@@ -46,6 +46,7 @@ describe('UpdateMessageUseCase', () => {
         const existingMessage: Message = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'Old content',
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -88,6 +89,7 @@ describe('UpdateMessageUseCase', () => {
         const existingMessage: Message = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'Old content',
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -115,6 +117,7 @@ describe('UpdateMessageUseCase', () => {
         const existingMessage: Message = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'Old content',
             createdAt: new Date(),
             updatedAt: new Date(),

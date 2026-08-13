@@ -4,6 +4,10 @@ import { seedConversations } from './conversation.seeder';
 import { seedParticipants } from './participant.seeder';
 import { seedInvites } from './invite.seeder';
 import { seedMessages } from './message.seeder';
+import {
+    fetchAllUsers,
+    seedUserConversations,
+} from './user-conversations.seeder';
 import { PrismaClient } from '@prisma/client';
 
 function createPrismaClient(): PrismaClient {
@@ -31,6 +35,10 @@ async function main() {
         await seedParticipants(prisma, conversations);
         await seedInvites(prisma, conversations);
         await seedMessages(prisma, conversations);
+
+        // Conversas dinâmicas: uma por usuário existente no user_db.
+        const users = await fetchAllUsers();
+        await seedUserConversations(prisma, users);
 
         console.log('Seed concluída com sucesso.');
     } finally {

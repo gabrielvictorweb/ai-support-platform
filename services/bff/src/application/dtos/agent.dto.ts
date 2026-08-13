@@ -15,3 +15,14 @@ export const toAgentOutput = (agent: AgentEntity): AgentOutput => ({
 export interface GetAgentsByConversationIdsDto {
   conversationIds: string[];
 }
+
+export interface AgentSourceOutput {
+  content: string;
+  source: string;
+  score: number;
+}
+
+export interface AgentAnswerOutput {
+  answer: string;
+  sources: AgentSourceOutput[];
+}

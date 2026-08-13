@@ -78,6 +78,7 @@ describe('Presenters', () => {
         const message: MessageOutput = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'hello',
             createdAt: new Date('2025-01-01T00:00:00.000Z'),
             updatedAt: new Date('2025-01-02T00:00:00.000Z'),
@@ -89,6 +90,7 @@ describe('Presenters', () => {
             message: {
                 id: 'msg-1',
                 conversationId: 'conv-1',
+                senderId: '',
                 content: 'hello',
                 createdAt: '2025-01-01T00:00:00.000Z',
                 updatedAt: '2025-01-02T00:00:00.000Z',
@@ -100,6 +102,7 @@ describe('Presenters', () => {
         const message: MessageOutput = {
             id: 'msg-1',
             conversationId: 'conv-1',
+            senderId: null,
             content: 'hello',
             createdAt: new Date('2025-01-01T00:00:00.000Z'),
             updatedAt: new Date('2025-01-02T00:00:00.000Z'),
@@ -118,6 +121,7 @@ describe('Presenters', () => {
                 {
                     id: 'msg-1',
                     conversationId: 'conv-1',
+                    senderId: '',
                     content: 'hello',
                     createdAt: '2025-01-01T00:00:00.000Z',
                     updatedAt: '2025-01-02T00:00:00.000Z',

@@ -113,10 +113,11 @@ public class UserRepository implements UserGateway {
         entity.setEmail(user.email());
         entity.setPhone(user.phone());
         entity.setExternalId(user.externalId());
+        entity.setRole(user.role() == null ? "USER" : user.role());
         return entity;
     }
 
     private User toDomain(UserEntity entity) {
-        return new User(entity.getId(), entity.getName(), entity.getEmail(), entity.getPhone(), entity.getExternalId());
+        return new User(entity.getId(), entity.getName(), entity.getEmail(), entity.getPhone(), entity.getExternalId(), entity.getRole());
     }
 }
