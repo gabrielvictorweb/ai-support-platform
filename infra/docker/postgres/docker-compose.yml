@@ -4,7 +4,7 @@ version: "3.8"
 # A replica acompanha o primary com pg_basebackup automático na primeira
 # subida; precisa do healthcheck para evitar race.
 
-x-postgres-image: &postgres-image bitnami/postgresql:latest
+x-postgres-image: &postgres-image soldevelo/postgresql:latest
 
 x-replication: &replication
     POSTGRESQL_REPLICATION_USER: repl_user
